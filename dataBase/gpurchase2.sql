@@ -11,17 +11,17 @@
  Target Server Version : 80028
  File Encoding         : 65001
 
- Date: 27/06/2022 14:55:30
+ Date: 27/06/2022 17:23:37
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for addressbook
+-- Table structure for addresses
 -- ----------------------------
-DROP TABLE IF EXISTS `addressbook`;
-CREATE TABLE `addressbook`  (
+DROP TABLE IF EXISTS `addresses`;
+CREATE TABLE `addresses`  (
   `addressId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '唯一标识收货地址的ID',
   `receiver` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收货人姓名',
   `phone` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收货人联系电话',
@@ -30,18 +30,18 @@ CREATE TABLE `addressbook`  (
   `ownerId` int UNSIGNED NOT NULL COMMENT '所属用户ID外键关联',
   PRIMARY KEY (`addressId`) USING BTREE,
   INDEX `ownerId`(`ownerId` ASC) USING BTREE,
-  CONSTRAINT `addressbook_ibfk_1` FOREIGN KEY (`ownerId`) REFERENCES `users` (`userId`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  CONSTRAINT `addresses_ibfk_1` FOREIGN KEY (`ownerId`) REFERENCES `users` (`userId`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of addressbook
+-- Records of addresses
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for goodstable
+-- Table structure for goods
 -- ----------------------------
-DROP TABLE IF EXISTS `goodstable`;
-CREATE TABLE `goodstable`  (
+DROP TABLE IF EXISTS `goods`;
+CREATE TABLE `goods`  (
   `goodsId` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '商品ID',
   `groupId` int UNSIGNED NOT NULL COMMENT '所属团的ID',
   `goodsName` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '商品名称',
@@ -51,11 +51,11 @@ CREATE TABLE `goodstable`  (
   `picture` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '商品图片',
   PRIMARY KEY (`goodsId`) USING BTREE,
   INDEX `groupId`(`groupId` ASC) USING BTREE,
-  CONSTRAINT `goodstable_ibfk_1` FOREIGN KEY (`groupId`) REFERENCES `group` (`groupId`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  CONSTRAINT `goods_ibfk_1` FOREIGN KEY (`groupId`) REFERENCES `group` (`groupId`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of goodstable
+-- Records of goods
 -- ----------------------------
 
 -- ----------------------------
@@ -72,6 +72,7 @@ CREATE TABLE `group`  (
   `duration` datetime NOT NULL COMMENT '团购持续时间',
   `picture` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '团购图片',
   `state` int UNSIGNED NOT NULL COMMENT '0-团购被删除，1-普通团购，2-秒杀团购',
+  `category` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '团购类别：水果鲜花，肉禽蛋，水产海鲜，乳品烘培，酒水饮料',
   PRIMARY KEY (`groupId`) USING BTREE,
   INDEX `headerId`(`headerId` ASC) USING BTREE,
   CONSTRAINT `group_ibfk_1` FOREIGN KEY (`headerId`) REFERENCES `users` (`userId`) ON DELETE RESTRICT ON UPDATE RESTRICT
@@ -116,7 +117,7 @@ CREATE TABLE `orders`  (
   INDEX `addressId`(`addressId` ASC) USING BTREE,
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`groupId`) REFERENCES `group` (`groupId`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`ownerId`) REFERENCES `users` (`userId`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `orders_ibfk_3` FOREIGN KEY (`addressId`) REFERENCES `addressbook` (`addressId`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `orders_ibfk_3` FOREIGN KEY (`addressId`) REFERENCES `addresses` (`addressId`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
