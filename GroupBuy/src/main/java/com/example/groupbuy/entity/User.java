@@ -28,20 +28,20 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "users", schema = "gpurchase")
+@Table(name = "user")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 @Comment("用户表")
 @ApiModel("用户信息")
 public class User {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "userId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     @Comment("用户主键")
     @ApiModelProperty(value = "用户主键")
     private Integer userId;
 
     @Basic
-    @Column(name = "userName")
+    @Column(name = "user_name")
     @Comment("用户姓名")
     @ApiModelProperty(value = "用户姓名")
     private String userName;
@@ -74,8 +74,8 @@ public class User {
 
     //与订阅的关系
     @ManyToMany
-    @JoinTable(name = "subscriptions",joinColumns = @JoinColumn(name = "userId"),
-            inverseJoinColumns = @JoinColumn(name = "groupId"))
+    @JoinTable(name = "subscriptions",joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id"))
     //1、关系维护端，负责多对多关系的绑定和解除
     //2、@JoinTable注解的name属性指定关联表的名字，joinColumns指定外键的名字，关联到关系维护端(User)
     //3、inverseJoinColumns指定外键的名字，要关联的关系被维护端(Authority)
@@ -84,13 +84,14 @@ public class User {
     //关联到主表的外键名：主表名+下划线+主表中的主键列名,即user_id
     //关联到从表的外键名：主表中用于关联的属性名+下划线+从表的主键列名,即authority_id
     //主表就是关系维护端对应的表，从表就是关系被维护端对应的表
-    private Set<Group> groups;
+    private Set<GroupBuying> groups;
 
     //与团购团长的关系一对多
-    @OneToMany(mappedBy = "user",cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+    @OneToMany(fetch=FetchType.EAGER,mappedBy = "user",cascade = CascadeType.ALL)
     //级联保存、更新、删除、刷新;延迟加载。当删除用户，会级联删除该用户的所有创建了的团购
     //拥有mappedBy注解的实体类为关系被维护端
     //mappedBy="author"中的author是Article中的author属性
-    private Set<Group> createGroups;//创建的团购列表
+    private Set<GroupBuying> createGroups;//创建的团购列表
+
 
 }

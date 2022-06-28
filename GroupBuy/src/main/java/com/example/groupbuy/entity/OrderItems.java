@@ -17,28 +17,28 @@ import javax.persistence.*;
 @Comment("订单详情信息表")
 @ApiModel("订单详情信息")
 public class OrderItems {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "orderItemId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_item_id")
     private Integer orderItemId;
 
     //商品ID
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "goodsId")
+    @JoinColumn(name = "goods_id")
     @Comment("商品主键")
     @ApiModelProperty(value = "商品信息")
     private Goods good;
 
     //商品数量
     @Basic
-    @Column(name = "goodsNumber")
+    @Column(name = "goods_number")
     private Integer goodsNumber;
 
     //所属订单ID
 
     //与订单的关系
     @ManyToOne
-    @JoinColumn(name = "orderId")
+    @JoinColumn(name = "order_id")
     @Comment("订单主键")
     @ApiModelProperty(value = "订单信息")
     private Orders orders;

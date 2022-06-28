@@ -12,26 +12,27 @@ import java.util.Set;
 @Setter
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "groupId")
-@Table(name = "group", schema = "gpurchase")
-public class Group {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Table(name = "groupbuying")
+public class GroupBuying {
     @Id
-    @Column(name = "groupId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "group_id")
     private Integer groupId;
 
     //团长ID，与用户表的userId外键关联
-    @ManyToOne(cascade={CascadeType.MERGE,CascadeType.REFRESH},optional=false)//可选属性optional=false,表示author不能为空。删除文章，不影响用户
-    @JoinColumn(name="headerId")//设置在article表中的关联字段(外键)
-    private User user;//所属作者
+    @ManyToOne(fetch = FetchType.EAGER)//可选属性optional=false,表示author不能为空。
+    @JoinColumn(name="user_id")//设置在article表中的关联字段(外键)
+    private User user;//所属用户
+
 
     //团购名称
     @Basic
-    @Column(name = "groupTitle")
+    @Column(name = "group_title")
     private String groupTitle;
 
     //团购信息
     @Basic
-    @Column(name = "groupInfo")
+    @Column(name = "group_info")
     private String groupInfo;
 
     //配送方式
@@ -41,13 +42,13 @@ public class Group {
 
     //团购开始时间
     @Basic
-    @Column(name = "startTime")
+    @Column(name = "start_time")
     private Timestamp startTime;
 
     //团购持续时间
     @Basic
     @Column(name = "duration")
-    private Timestamp duration;
+    private Integer duration;
 
     //团购图片
     @Basic
@@ -72,4 +73,8 @@ public class Group {
     //和商品的多对一
     @OneToMany(mappedBy = "group",fetch = FetchType.EAGER)
     private Set<Goods> goods;
+
+    //和订单的多对一
+    @OneToMany(mappedBy = "group",fetch = FetchType.EAGER)
+    private Set<Orders> orders;
 }

@@ -14,26 +14,26 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "goodsId")
-@Table(name = "goods", schema = "gpurchase")
+@Table(name = "goods")
 public class Goods {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "goodsId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "goods_id")
     private Integer goodsId;
 
     //商品所属的团ID，外键关联
     @ManyToOne
-    @JoinColumn(name = "groupId")
-    private Group group;
+    @JoinColumn(name = "group_id")
+    private GroupBuying group;
 
     //商品名称
     @Basic
-    @Column(name = "goodsName")
+    @Column(name = "goods_name")
     private String goodsName;
 
     //商品信息
     @Basic
-    @Column(name = "goodsInfo")
+    @Column(name = "goods_info")
     private String goodsInfo;
 
     //商品价格
