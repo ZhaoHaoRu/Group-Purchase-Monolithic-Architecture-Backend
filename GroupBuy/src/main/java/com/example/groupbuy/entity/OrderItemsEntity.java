@@ -8,7 +8,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "orderitems", schema = "gpurchase")
-public class OrderitemsEntity {
+public class OrderItemsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "orderItemId")
@@ -70,7 +70,7 @@ public class OrderitemsEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OrderitemsEntity that = (OrderitemsEntity) o;
+        OrderItemsEntity that = (OrderItemsEntity) o;
         return Objects.equals(orderItemId, that.orderItemId) && Objects.equals(goodsId, that.goodsId) && Objects.equals(goodsNumber, that.goodsNumber) && Objects.equals(orderId, that.orderId);
     }
 
