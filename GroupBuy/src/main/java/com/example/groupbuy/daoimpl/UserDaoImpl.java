@@ -27,4 +27,9 @@ public class UserDaoImpl implements UserDao {
     public User findByUserName(String userName) {
         return userRepository.findByUserName(userName);
     }
+
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
+    }
 }

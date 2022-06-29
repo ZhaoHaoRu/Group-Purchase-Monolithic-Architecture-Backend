@@ -3,7 +3,6 @@ package com.example.groupbuy.serviceimpl;
 import com.example.groupbuy.dao.*;
 import com.example.groupbuy.entity.*;
 import com.example.groupbuy.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,6 +30,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(password);
         user.setEmail(email);
         user.setWallet(BigDecimal.valueOf(1000));
-        return user;
+        User afterSave = userDao.save(user);
+        return afterSave;
     }
 }

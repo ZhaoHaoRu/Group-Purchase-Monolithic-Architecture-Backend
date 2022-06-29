@@ -8,10 +8,13 @@ import com.example.groupbuy.entity.*;
 
 
 public interface UserRepository extends JpaRepository<User, Integer> {
-    @Query(value = "from User where userName = :username and password = :password")
+    @Query(value = "from User where userName = :userName and password = :password")
     User checkUser(@Param("userName") String userName, @Param("password") String password);
 
     User findByUserId(int id);
 
     User findByUserName(String userName);
+
+    User save(User user);
+
 }

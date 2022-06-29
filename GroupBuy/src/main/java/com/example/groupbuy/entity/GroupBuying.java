@@ -41,6 +41,7 @@ public class GroupBuying {
     private String delivery;
 
     //团购开始时间
+    //yyyy-MM-dd HH:mm:ss
     @Basic
     @Column(name = "start_time")
     private Timestamp startTime;

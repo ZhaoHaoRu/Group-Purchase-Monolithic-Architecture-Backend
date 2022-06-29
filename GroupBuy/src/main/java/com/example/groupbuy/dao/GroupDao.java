@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface GroupDao {
     Optional<GroupBuying> getGroupById(int id);
+
 }
