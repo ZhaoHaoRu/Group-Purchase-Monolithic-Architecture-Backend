@@ -1,8 +1,10 @@
 package com.example.groupbuy.controller;
 
 
+import com.example.groupbuy.entity.GroupBuying;
 import com.example.groupbuy.entity.User;
 import com.example.groupbuy.service.UserService;
+import com.example.groupbuy.utils.messageUtils.Message;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,12 @@ public class UserController {
     @ApiOperation("新用户注册")
     public @ResponseBody User register(@RequestParam("userName") String userName, @RequestParam("password") String password, @RequestParam("email") String email) {
         return userService.register(userName, password, email);
+    }
+
+    @GetMapping("/getUserById")
+    @ApiOperation("通过id获取用户")
+    public Message<User> getUserById(@RequestParam int id) {
+        return userService.getUserById(id);
     }
 
 }

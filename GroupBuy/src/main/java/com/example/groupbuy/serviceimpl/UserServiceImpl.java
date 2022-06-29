@@ -3,6 +3,8 @@ package com.example.groupbuy.serviceimpl;
 import com.example.groupbuy.dao.*;
 import com.example.groupbuy.entity.*;
 import com.example.groupbuy.service.UserService;
+import com.example.groupbuy.utils.messageUtils.Message;
+import com.example.groupbuy.utils.messageUtils.MessageUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,5 +34,10 @@ public class UserServiceImpl implements UserService {
         user.setWallet(BigDecimal.valueOf(1000));
         User afterSave = userDao.save(user);
         return afterSave;
+    }
+
+    @Override
+    public Message<User> getUserById(int id) {
+        return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE, MessageUtil.SUCCESS, userDao.findById(id));
     }
 }
