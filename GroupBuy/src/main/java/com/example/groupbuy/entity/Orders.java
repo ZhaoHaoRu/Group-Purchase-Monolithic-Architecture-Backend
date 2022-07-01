@@ -1,14 +1,14 @@
 package com.example.groupbuy.entity;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,11 +35,11 @@ public class Orders {
     private User user;
 
     /**
-     * 订单状态 用于区分是购物车还是订单  0-未支付，表示购物车，1-支付，表示订单
+     * 订单状态 用于区分是购物车还是订单  0-未支付，表示购物车，1-支付，表示订单 2-订单取消，已退款
      */
     @Basic
     @Column(name = "state")
-    private boolean state;
+    private Integer state;
 
     //下单时间
     @Basic
@@ -49,7 +49,6 @@ public class Orders {
     //配送地址所对应的ID
     @ManyToOne(fetch= FetchType.EAGER)
     @JoinColumn(name = "address_id")
-
     @ApiModelProperty(value = "配送地址")
     private Address address;
 

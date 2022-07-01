@@ -1,6 +1,7 @@
 package com.example.groupbuy.controller;
 
 
+import com.example.groupbuy.entity.Address;
 import com.example.groupbuy.entity.GroupBuying;
 import com.example.groupbuy.entity.User;
 import com.example.groupbuy.service.UserService;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path = "/user")
@@ -22,14 +24,13 @@ public class UserController {
 
     @PostMapping(path= "/userAuth")
     @ApiOperation("用户登录验证")
-    public @ResponseBody User userAuth(@RequestParam("userName") String userName, @RequestParam("password") String password) {
-        User user =  userService.userAuth(userName, password);
-        return user;
+    public @ResponseBody Message<User> userAuth(@RequestParam("userName") String userName, @RequestParam("password") String password) {
+        return userService.userAuth(userName, password);
     }
 
     @PostMapping(path="/register")
     @ApiOperation("新用户注册")
-    public @ResponseBody User register(@RequestParam("userName") String userName, @RequestParam("password") String password, @RequestParam("email") String email) {
+    public @ResponseBody Message<User> register(@RequestParam("userName") String userName, @RequestParam("password") String password, @RequestParam("email") String email) {
         return userService.register(userName, password, email);
     }
 
@@ -37,6 +38,18 @@ public class UserController {
     @ApiOperation("通过id获取用户")
     public Message<User> getUserById(@RequestParam int id) {
         return userService.getUserById(id);
+    }
+
+    @GetMapping("/getUserCollection")
+    @ApiOperation("获取用户收藏的团购")
+    public Message<Set<GroupBuying>> getUserCollection(@RequestParam int id) {
+        return userService.getUserCollection(id);
+    }
+
+    @GetMapping("/getUserAddress")
+    @ApiOperation("获取用户地址")
+    public Message<Set<Address> > getUserAddress(@RequestParam int id) {
+        return userService.getUserAddress(id);
     }
 
 }
