@@ -10,6 +10,7 @@ import com.example.groupbuy.entity.*;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.Set;
 
 
 public interface UserRepository extends JpaRepository<User, Integer> {

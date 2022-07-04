@@ -2,6 +2,7 @@ package com.example.groupbuy.entity;
 
 
 import com.example.groupbuy.config.Comment;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -69,10 +70,12 @@ public class User {
 
 
     //与地址簿的关系
+    @JsonIgnore
     @OneToMany(mappedBy = "user",cascade=CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<Address> addresses;
 
     //与订阅的关系
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "subscriptions",joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id"))
@@ -87,6 +90,7 @@ public class User {
     private Set<GroupBuying> groups;
 
     //与团购团长的关系一对多
+    @JsonIgnore
     @OneToMany(fetch=FetchType.EAGER,mappedBy = "user",cascade = CascadeType.ALL)
     //级联保存、更新、删除、刷新;延迟加载。当删除用户，会级联删除该用户的所有创建了的团购
     //拥有mappedBy注解的实体类为关系被维护端

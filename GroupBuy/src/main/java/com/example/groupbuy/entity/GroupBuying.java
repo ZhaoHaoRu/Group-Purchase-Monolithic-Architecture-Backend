@@ -2,6 +2,7 @@ package com.example.groupbuy.entity;
 
 import com.example.groupbuy.config.Comment;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -92,6 +93,7 @@ public class GroupBuying {
     @ApiModelProperty(value = "团购类型")
     private String category;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "groups")
     private Set<User> users;
 
@@ -100,6 +102,7 @@ public class GroupBuying {
     private Set<Goods> goods;
 
     //和订单的多对一
+    @JsonIgnore
     @OneToMany(mappedBy = "group",fetch = FetchType.EAGER)
     private Set<Orders> orders;
 }

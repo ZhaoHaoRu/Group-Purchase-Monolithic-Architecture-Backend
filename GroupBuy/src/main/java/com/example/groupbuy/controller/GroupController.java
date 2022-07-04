@@ -50,6 +50,12 @@ public class GroupController {
         return groupService.getAllGroup();
     }
 
+    @PostMapping("/getCollectedGroups")
+    @ApiOperation("获取用户已经订阅的团购")
+    public @ResponseBody Message<Set<GroupBuying>> getCollectedGroup(@RequestParam("userId") Integer userId) {
+        return groupService.getCollectedGroup(userId);
+    }
+
 
     @GetMapping("/endGroup")
     @ApiOperation("结束团购")
@@ -64,6 +70,7 @@ public class GroupController {
 
         return groupService.deleteGroup(groupId);
     }
+
     @PostMapping("/changeGroup")
     @ApiOperation("修改团购（必须传回ID)")
     public Message<String> changeGroup(@RequestBody JSONObject groupBuying){

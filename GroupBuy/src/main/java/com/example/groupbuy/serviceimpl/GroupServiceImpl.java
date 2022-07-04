@@ -111,6 +111,22 @@ public class GroupServiceImpl implements GroupService {
         return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, groups);
     }
 
+    @Override
+    public Message<Set<GroupBuying>> getCollectedGroup(Integer userId) {
+        User user = userDao.findById(userId);
+        if (user == null)
+            return MessageUtil.createMessage(MessageUtil.MISS_USER_CODE, MessageUtil.MISS_USER_MSG, null);
+
+        Set<GroupBuying> groups = user.getGroups();
+
+        // 此处只会选择还有效的团购
+        for (GroupBuying group:groups) {
+            if(group.getState() == 0)
+                groups.remove(group);
+        }
+        return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, groups);
+    }
+
 
     @Override
     public Message<String> endGroup(int groupId){

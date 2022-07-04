@@ -29,4 +29,6 @@ public interface GroupService {
     Message<Set<GroupBuying>> getGroupByTag(String category);
 
     Message<Set<GroupBuying>> getAllGroup();
+
+    Message<Set<GroupBuying>> getCollectedGroup(Integer userId);
 }
