@@ -30,7 +30,6 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "user")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 @Comment("用户表")
 @ApiModel("用户信息")
 public class User {

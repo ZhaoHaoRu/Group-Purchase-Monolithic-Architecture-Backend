@@ -15,7 +15,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Comment("书籍表")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "addressId")
 @Table(name = "address")
 @ApiModel("地址信息")
 public class Address {

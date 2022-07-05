@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "order_item")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "orderItemId")
 @Comment("订单详情信息表")
 @ApiModel("订单详情信息")
 public class OrderItems {
