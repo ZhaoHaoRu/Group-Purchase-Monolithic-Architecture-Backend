@@ -19,6 +19,7 @@ public class MessageUtil {
   public static final String MISS_TAG_MSG = "没有对应的标签";
   public static final String CREATE_GROUP_ERROR = "创建团购失败";
   public static final String MONEY_NOT_ENOUGH = "用户余额不足";
+  public static final String DONE_SUCCESS_CODE = "操作成功！";
 
   public static final int LOGIN_ERROR_CODE = -1;
   public static final int LOGIN_SUCCESS_CODE = 1;

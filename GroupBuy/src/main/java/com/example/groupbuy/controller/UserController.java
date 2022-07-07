@@ -52,4 +52,9 @@ public class UserController {
         return userService.getUserAddress(id);
     }
 
+    @GetMapping("/setNewAddress")
+    @ApiOperation("新增用户地址")
+    public Message<Integer> setNewAddress(@RequestParam("userId") int userId, @RequestParam("receiver") String receiver, @RequestParam("phone") String phone, @RequestParam("region") String region, @RequestParam("location") String location) {
+        return userService.setNewAddress(userId, receiver, phone, region, location);
+    }
 }

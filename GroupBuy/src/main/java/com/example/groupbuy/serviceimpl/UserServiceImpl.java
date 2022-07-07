@@ -76,4 +76,24 @@ public class UserServiceImpl implements UserService {
             }
 
     }
+
+    @Override
+    public Message<Integer> setNewAddress(int userId, String receiver, String phone, String region, String location) {
+        User user = userDao.findById(userId);
+        //如果没有这个用户
+        if(user == null) {
+            return MessageUtil.createMessage(MessageUtil.MISS_USER_CODE, MessageUtil.MISS_USER_MSG, -1);
+        }
+
+//        Set<Address> addresses = user.getAddresses();
+        Address address = new Address();
+        address.setLocation(location);
+        address.setReceiver(receiver);
+        address.setRegion(region);
+        address.setUser(user);
+        address.setPhone(phone);
+        Address newAddress = userDao.saveAddress(address);
+//        addresses.add(newAddress);
+        return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.DONE_SUCCESS_CODE, newAddress.getAddressId());
+    }
 }

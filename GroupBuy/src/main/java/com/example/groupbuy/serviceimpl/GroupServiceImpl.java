@@ -87,7 +87,12 @@ public class GroupServiceImpl implements GroupService {
             return MessageUtil.createMessage(MessageUtil.MISS_USER_CODE, MessageUtil.MISS_USER_MSG, null);
         }
         Set<GroupBuying> collects = user.getGroups();
-        collects.add(group.get());
+
+        // 这里的逻辑是如果是已经收藏的团购，这样相当于取消收藏
+        if(collects.contains(group.get()))
+            collects.remove(group.get());
+        else
+            collects.add(group.get());
         user.setGroups(collects);
         User userAfterSave = userDao.save(user);
         userAfterSave.setCreateGroups(null);

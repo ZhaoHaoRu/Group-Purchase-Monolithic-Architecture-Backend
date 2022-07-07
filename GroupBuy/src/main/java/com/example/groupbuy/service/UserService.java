@@ -2,6 +2,7 @@ package com.example.groupbuy.service;
 
 import com.example.groupbuy.entity.*;
 import com.example.groupbuy.utils.messageUtils.Message;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Set;
 
@@ -15,5 +16,8 @@ public interface UserService {
     Message<Set<GroupBuying>> getUserCollection(int id);
 
     Message<Set<Address> > getUserAddress(int id);
+
+    // 返回值为addressId
+    Message<Integer> setNewAddress(int userId, String receiver, String phone, String region, String location);
 
 }

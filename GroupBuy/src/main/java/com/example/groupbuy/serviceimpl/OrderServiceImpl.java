@@ -127,11 +127,11 @@ public class OrderServiceImpl implements OrderService {
             for (int i=0; i<itemList.size(); ++i){
                 OrderItems item = itemList.get(i);
                 if (item.getGood()==goods){
-                    if (goodsNumber==0){
+                    int formerNum = item.getGoodsNumber();
+                    orderDao.changeGoodsNum(goodsNumber + formerNum, goodsId, orderId);
+                    int currentNum = item.getGoodsNumber();
+                    if (currentNum == 0){
                         orderDao.deleteByItemId(item.getOrderItemId());
-                    }
-                    else {
-                        orderDao.changeGoodsNum(goodsNumber, goodsId, orderId);
                     }
                     resultInfo = "加入购物车成功!";
                     return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE,MessageUtil.SUCCESS,resultInfo);

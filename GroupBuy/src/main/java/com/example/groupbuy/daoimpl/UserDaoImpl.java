@@ -2,6 +2,7 @@ package com.example.groupbuy.daoimpl;
 
 import com.example.groupbuy.entity.*;
 import com.example.groupbuy.dao.UserDao;
+import com.example.groupbuy.repository.AddressesRepository;
 import com.example.groupbuy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,8 @@ import java.util.Optional;
 public class UserDaoImpl implements UserDao {
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private AddressesRepository addressesRepository;
 
     @Override
     public User findById(int id) {
@@ -34,4 +37,7 @@ public class UserDaoImpl implements UserDao {
     public User save(User user) {
         return userRepository.save(user);
     }
+
+    @Override
+    public Address saveAddress(Address address) { return addressesRepository.save(address);}
 }

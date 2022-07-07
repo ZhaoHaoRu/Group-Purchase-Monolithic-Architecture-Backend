@@ -10,4 +10,6 @@ public interface UserDao {
     User findByUserName(String userName);
 
     User save(User user);
+
+    Address saveAddress(Address address);
 }
