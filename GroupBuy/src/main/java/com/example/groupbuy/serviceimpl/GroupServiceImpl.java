@@ -3,10 +3,13 @@ package com.example.groupbuy.serviceimpl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.groupbuy.dao.GroupDao;
+import com.example.groupbuy.dao.OrderDao;
 import com.example.groupbuy.dao.UserDao;
 import com.example.groupbuy.entity.Goods;
 import com.example.groupbuy.entity.GroupBuying;
 import com.example.groupbuy.entity.User;
+import com.example.groupbuy.entity.VO.ChangeGoods;
+import com.example.groupbuy.entity.VO.ChangeGroup;
 import com.example.groupbuy.service.GroupService;
 import com.example.groupbuy.utils.JpaUtils;
 import com.example.groupbuy.utils.messageUtils.Message;
@@ -17,9 +20,7 @@ import com.example.groupbuy.service.*;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -29,6 +30,9 @@ public class GroupServiceImpl implements GroupService {
     UserDao userDao;
     @Resource
     OrderService orderService;
+
+    @Resource
+    OrderDao orderDao;
 
     @Override
     public Message<GroupBuying> getGroupById(int id) {
@@ -154,71 +158,110 @@ public class GroupServiceImpl implements GroupService {
 
 
     @Override
-    public  Message<String> changeGroup(JSONObject groupBuying){
+    public  Message<String> changeGroup(ChangeGroup groupBuying){
+        Integer groupId = groupBuying.getGroupId();
+        String groupTitle = groupBuying.getGroupTitle();
+        String groupInfo = groupBuying.getGroupInfo();
+        String category = groupBuying.getCategory();
+        Integer duration = groupBuying.getDuration();
+        String delivery = groupBuying.getDelivery();
+        List<ChangeGoods> goodsList = groupBuying.getGoodsList();
+        //时间戳转换
+        String StrTime = groupBuying.getStartTime();
+        Timestamp startTime = Timestamp.valueOf(StrTime);
 
-        int groupId =  groupBuying.getInteger("groupId");
-        GroupBuying groupById = groupDao.getGroupById(groupId).orElseThrow(() -> new IllegalArgumentException("错误"));
+        //更新团购信息
+        groupDao.updateGroup(groupId,groupTitle,groupInfo,category,startTime,duration,delivery);
 
-        GroupBuying newGroup = groupById;
+        //更新商品
+        for (int i=0; i<goodsList.size(); ++i){
+            ChangeGoods newGoods = goodsList.get(i);
+            Goods oldGoods = orderDao.findByGoodsId(newGoods.getGoodsId());
+            //如果商品价格不改变，那么可以在原商品上面直接更新
+            if (Objects.equals(newGoods.getPrice(), oldGoods.getPrice())){
+                groupDao.updateGoods(newGoods.getGoodsId(), newGoods.getGoodsInfo(), newGoods.getPrice(), newGoods.getInventory());
+            }
+            else{
+                //原商品的库存变为0
+                groupDao.updateGoods(oldGoods.getGoodsId(), oldGoods.getGoodsInfo(), oldGoods.getPrice(), 0);
 
-        if(groupBuying.containsKey("groupTitle"))
-            newGroup.setGroupTitle(groupBuying.getString("groupTitle"));
-        if(groupBuying.containsKey("groupInfo"))
-            newGroup.setGroupInfo(groupBuying.getString("groupInfo"));
-        if(groupBuying.containsKey("groupInfo"))
-            newGroup.setDelivery(groupBuying.getString("groupInfo"));
-        if(groupBuying.containsKey("groupInfo"))
-            newGroup.setDuration(groupBuying.getInteger("duration"));
-        if(groupBuying.containsKey("picture"))
-            newGroup.setPicture(groupBuying.getString("picture"));
-        if(groupBuying.containsKey("category"))
-            newGroup.setCategory(groupBuying.getString("category"));
-
-
-        if(groupBuying.containsKey("goods")){
-            JSONArray goodsArray = groupBuying.getJSONArray("goods");
-        //System.out.println(groupBuying);
-        //System.out.println(goodsArray.size());
-
-        if(goodsArray.size() > 0) {
-
-            newGroup.setGoods(null);
-
-            for(int i = 0; i < goodsArray.size(); ++i) {
-
-                //Object obj=goodsArray.parseObject(i);
-
-                JSONObject obj =goodsArray.getJSONObject(i);
-
+                //插入新商品
                 Goods goods = new Goods();
-
-                goods.setGoodsInfo(obj.getString("goodsInfo"));
-                goods.setGoodsName(obj.getString("goodsName"));
-                goods.setPicture(obj.getString("picture"));
-
-
-
-                BigDecimal bd= new BigDecimal((obj.getString("price")));
-
-
-                goods.setPrice(bd);
-                System.out.println(groupBuying);
-
-                goods.setInventory(Integer.parseInt(obj.get("inventory").toString()));
-
-
-
-                goods.setGroup(newGroup);
-
-
+                //保证修改的信息存入了
+                goods.setGoodsInfo(newGoods.getGoodsInfo());
+                goods.setInventory(newGoods.getInventory());
+                goods.setPrice(newGoods.getPrice());
+                //保证原来的一些信息不变
+                goods.setGroup(oldGoods.getGroup());
+                goods.setGoodsName(oldGoods.getGoodsName());
+                goods.setPicture(oldGoods.getPicture());
                 groupDao.saveGoods(goods);
             }
         }
-        }
-
-        JpaUtils.createUpdateEntity(groupById, newGroup);
-        groupDao.save(newGroup);
         return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE,MessageUtil.SUCCESS);
+//        int groupId =  groupBuying.getInteger("groupId");
+//        GroupBuying groupById = groupDao.getGroupById(groupId).orElseThrow(() -> new IllegalArgumentException("错误"));
+//
+//        GroupBuying newGroup = groupById;
+//
+//        if(groupBuying.containsKey("groupTitle"))
+//            newGroup.setGroupTitle(groupBuying.getString("groupTitle"));
+//        if(groupBuying.containsKey("groupInfo"))
+//            newGroup.setGroupInfo(groupBuying.getString("groupInfo"));
+//        if(groupBuying.containsKey("groupInfo"))
+//            newGroup.setDelivery(groupBuying.getString("groupInfo"));
+//        if(groupBuying.containsKey("groupInfo"))
+//            newGroup.setDuration(groupBuying.getInteger("duration"));
+//        if(groupBuying.containsKey("picture"))
+//            newGroup.setPicture(groupBuying.getString("picture"));
+//        if(groupBuying.containsKey("category"))
+//            newGroup.setCategory(groupBuying.getString("category"));
+//
+//
+//        if(groupBuying.containsKey("goods")){
+//            JSONArray goodsArray = groupBuying.getJSONArray("goods");
+//        //System.out.println(groupBuying);
+//        //System.out.println(goodsArray.size());
+//
+//        if(goodsArray.size() > 0) {
+//
+//            newGroup.setGoods(null);
+//
+//            for(int i = 0; i < goodsArray.size(); ++i) {
+//
+//                //Object obj=goodsArray.parseObject(i);
+//
+//                JSONObject obj =goodsArray.getJSONObject(i);
+//
+//                Goods goods = new Goods();
+//
+//                goods.setGoodsInfo(obj.getString("goodsInfo"));
+//                goods.setGoodsName(obj.getString("goodsName"));
+//                goods.setPicture(obj.getString("picture"));
+//
+//
+//
+//                BigDecimal bd= new BigDecimal((obj.getString("price")));
+//
+//
+//                goods.setPrice(bd);
+//                System.out.println(groupBuying);
+//
+//                goods.setInventory(Integer.parseInt(obj.get("inventory").toString()));
+//
+//
+//
+//                goods.setGroup(newGroup);
+//
+//
+//                groupDao.saveGoods(goods);
+//            }
+//        }
+//        }
+//
+//        JpaUtils.createUpdateEntity(groupById, newGroup);
+//        groupDao.save(newGroup);
+//        return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE,MessageUtil.SUCCESS);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.groupbuy.service;
 
 import com.example.groupbuy.entity.GroupBuying;
+import com.example.groupbuy.entity.VO.ChangeGroup;
 import com.example.groupbuy.utils.messageUtils.Message;
 import com.alibaba.fastjson.JSONObject;
 import com.example.groupbuy.entity.GroupBuying;
@@ -19,7 +20,7 @@ public interface GroupService {
 
     Message<String> deleteGroup(int groupId);
 
-    Message<String> changeGroup(JSONObject groupBuying);
+    Message<String> changeGroup(ChangeGroup groupBuying);
 
 
     Message<GroupBuying> createGroup(JSONObject groupBuying);

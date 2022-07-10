@@ -8,6 +8,9 @@ import com.example.groupbuy.repository.GroupRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -46,10 +49,22 @@ public class GroupDaoImpl implements GroupDao {
 
     @Override
     public void deleteGroup(int groupId) {
-//        GroupBuying groupBuying = getGroupById(groupId).get();
-//        groupBuying.setState(0);
-//        groupRepository.save(groupBuying);
         groupRepository.updateGroupState(groupId);
     }
 
+    @Override
+    public void updateGroup(Integer groupId, String groupTitle, String groupInfo, String category,
+                                Timestamp startTime, Integer duration, String delivery){
+        groupRepository.updateGroup(category, delivery, duration, groupInfo, groupTitle, startTime, groupId);
+    }
+
+    @Override
+    public List<Goods> getGoodsByGroupId(Integer groupId){
+        return goodsRepository.getGoodsByGroupId(groupId);
+    }
+
+    @Override
+    public void updateGoods(Integer goodsId, String goodsInfo, BigDecimal price, Integer inventory){
+        goodsRepository.updateGoods(goodsInfo, inventory, price, goodsId);
+    }
 }

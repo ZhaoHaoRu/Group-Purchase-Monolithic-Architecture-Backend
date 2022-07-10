@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.Set;
 @Repository
 public interface GroupRepository extends JpaRepository<GroupBuying, Integer>, JpaSpecificationExecutor<GroupBuying> {
@@ -26,4 +27,12 @@ public interface GroupRepository extends JpaRepository<GroupBuying, Integer>, Jp
     @Modifying
     @Query(value = "update groupbuying set state = 0 where group_id = :groupId",nativeQuery = true)
     void updateGroupState(@Param("groupId")Integer groupId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update groupBuying set category = :category, delivery = :delivery, duration = :duration," +
+            "group_info = :groupInfo, group_title = :groupTitle, start_time = :startTime where group_id = :groupId",nativeQuery = true)
+    void updateGroup(@Param("category")String category, @Param("delivery")String delivery, @Param("duration")Integer duration,
+                     @Param("groupInfo")String groupInfo, @Param("group_title")String groupTitle, @Param("start_time")Timestamp startTime,
+                     @Param("group_id")Integer groupId);
 }
