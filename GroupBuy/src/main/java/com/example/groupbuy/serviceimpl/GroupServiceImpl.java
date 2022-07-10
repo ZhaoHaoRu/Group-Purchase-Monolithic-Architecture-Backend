@@ -12,6 +12,7 @@ import com.example.groupbuy.utils.JpaUtils;
 import com.example.groupbuy.utils.messageUtils.Message;
 import com.example.groupbuy.utils.messageUtils.MessageUtil;
 import org.springframework.stereotype.Service;
+import com.example.groupbuy.service.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -26,6 +27,8 @@ public class GroupServiceImpl implements GroupService {
     GroupDao groupDao;
     @Resource
     UserDao userDao;
+    @Resource
+    OrderService orderService;
 
     @Override
     public Message<GroupBuying> getGroupById(int id) {
@@ -142,6 +145,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Message<String> deleteGroup(int groupId){
+//        Message<String> result = orderService.deleteOrderByGroupId(groupId);
+//        if(result.getStatus() != 1)
+//            return MessageUtil.createMessage(MessageUtil.FAIL_CODE, MessageUtil.FAIL);
         groupDao.deleteGroup(groupId);
         return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE,MessageUtil.SUCCESS);
     }

@@ -57,4 +57,10 @@ public class UserController {
     public Message<Integer> setNewAddress(@RequestParam("userId") int userId, @RequestParam("receiver") String receiver, @RequestParam("phone") String phone, @RequestParam("region") String region, @RequestParam("location") String location) {
         return userService.setNewAddress(userId, receiver, phone, region, location);
     }
+
+    @GetMapping("/getCreatedGroup")
+    @ApiOperation("获取用户创建的团购")
+    public Message<Set<GroupBuying>> getCreatedGroup(@RequestParam("userId") int userId) {
+        return userService.getCreatedGroup(userId);
+    }
 }

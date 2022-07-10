@@ -60,7 +60,6 @@ public class GroupController {
     @GetMapping("/endGroup")
     @ApiOperation("结束团购")
     public Message<String> endGroup(@RequestParam int groupId){
-
         return groupService.endGroup(groupId);
     }
 

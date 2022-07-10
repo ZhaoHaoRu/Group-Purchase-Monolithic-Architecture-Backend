@@ -20,4 +20,5 @@ public interface UserService {
     // 返回值为addressId
     Message<Integer> setNewAddress(int userId, String receiver, String phone, String region, String location);
 
+    Message<Set<GroupBuying>> getCreatedGroup(int userId);
 }

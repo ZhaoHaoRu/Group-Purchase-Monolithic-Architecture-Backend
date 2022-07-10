@@ -96,4 +96,15 @@ public class UserServiceImpl implements UserService {
 //        addresses.add(newAddress);
         return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.DONE_SUCCESS_CODE, newAddress.getAddressId());
     }
+
+    @Override
+    public Message<Set<GroupBuying>> getCreatedGroup(int userId) {
+        User user = userDao.findById(userId);
+        //如果没有这个用户
+        if(user == null) {
+            return MessageUtil.createMessage(MessageUtil.MISS_USER_CODE, MessageUtil.MISS_USER_MSG, null);
+        }
+
+        return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, user.getCreateGroups());
+    }
 }
