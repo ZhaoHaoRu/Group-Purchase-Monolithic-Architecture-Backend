@@ -78,7 +78,7 @@ public class GroupBuying {
     private String picture;
 
     /**
-     * 团购状态： 0-团购已取消    1-普通团购   2-秒杀团购
+     * 团购状态： 0-团购已取消    1-普通团购   2-秒杀团购   3-团购已结束
      */
     @Basic
     @Column(name = "state")

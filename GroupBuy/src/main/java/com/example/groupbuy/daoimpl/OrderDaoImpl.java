@@ -145,7 +145,9 @@ public class OrderDaoImpl implements OrderDao {
             newObject.put("number",item.getGoodsNumber());
             newObject.put("picture",goods.getPicture());
             dataList.add(newObject);
-            totalPrice = totalPrice.add(goods.getPrice());
+            int num = item.getGoodsNumber();
+            for(int j = 0; j < num; ++j)
+                totalPrice = totalPrice.add(goods.getPrice());
         }
         JSONObject result = new JSONObject();
         result.put("totalPrice", totalPrice);

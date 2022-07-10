@@ -41,12 +41,15 @@ public class GroupDaoImpl implements GroupDao {
     public void endGroup(int groupId) {
         GroupBuying groupBuying = getGroupById(groupId).get();
         groupBuying.setDuration(0);
+        groupRepository.save(groupBuying);
     }
 
     @Override
     public void deleteGroup(int groupId) {
-        GroupBuying groupBuying = getGroupById(groupId).get();
-        groupBuying.setState(0);
+//        GroupBuying groupBuying = getGroupById(groupId).get();
+//        groupBuying.setState(0);
+//        groupRepository.save(groupBuying);
+        groupRepository.updateGroupState(groupId);
     }
 
 }

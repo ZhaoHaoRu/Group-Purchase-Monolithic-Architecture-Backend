@@ -12,6 +12,7 @@ import com.example.groupbuy.utils.JpaUtils;
 import com.example.groupbuy.utils.messageUtils.Message;
 import com.example.groupbuy.utils.messageUtils.MessageUtil;
 import org.springframework.stereotype.Service;
+import com.example.groupbuy.service.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -26,6 +27,8 @@ public class GroupServiceImpl implements GroupService {
     GroupDao groupDao;
     @Resource
     UserDao userDao;
+    @Resource
+    OrderService orderService;
 
     @Override
     public Message<GroupBuying> getGroupById(int id) {
@@ -87,7 +90,12 @@ public class GroupServiceImpl implements GroupService {
             return MessageUtil.createMessage(MessageUtil.MISS_USER_CODE, MessageUtil.MISS_USER_MSG, null);
         }
         Set<GroupBuying> collects = user.getGroups();
-        collects.add(group.get());
+
+        // 这里的逻辑是如果是已经收藏的团购，这样相当于取消收藏
+        if(collects.contains(group.get()))
+            collects.remove(group.get());
+        else
+            collects.add(group.get());
         user.setGroups(collects);
         User userAfterSave = userDao.save(user);
         userAfterSave.setCreateGroups(null);
@@ -137,6 +145,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Message<String> deleteGroup(int groupId){
+        Message<String> result = orderService.deleteOrderByGroupId(groupId);
+        if(result.getStatus() != 1)
+            return MessageUtil.createMessage(MessageUtil.FAIL_CODE, MessageUtil.FAIL);
         groupDao.deleteGroup(groupId);
         return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE,MessageUtil.SUCCESS);
     }
