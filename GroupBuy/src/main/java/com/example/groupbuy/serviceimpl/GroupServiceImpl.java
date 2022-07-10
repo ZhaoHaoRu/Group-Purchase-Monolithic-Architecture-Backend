@@ -145,9 +145,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Message<String> deleteGroup(int groupId){
-//        Message<String> result = orderService.deleteOrderByGroupId(groupId);
-//        if(result.getStatus() != 1)
-//            return MessageUtil.createMessage(MessageUtil.FAIL_CODE, MessageUtil.FAIL);
+        Message<String> result = orderService.deleteOrderByGroupId(groupId);
+        if(result.getStatus() != 1)
+            return MessageUtil.createMessage(MessageUtil.FAIL_CODE, MessageUtil.FAIL);
         groupDao.deleteGroup(groupId);
         return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE,MessageUtil.SUCCESS);
     }
