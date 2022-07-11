@@ -6,10 +6,13 @@ import com.example.groupbuy.entity.*;
 import com.example.groupbuy.service.UserService;
 import com.example.groupbuy.utils.messageUtils.Message;
 import com.example.groupbuy.utils.messageUtils.MessageUtil;
+import com.google.common.collect.Sets;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -59,8 +62,14 @@ public class UserServiceImpl implements UserService {
         if(user == null) {
             return MessageUtil.createMessage(MessageUtil.MISS_USER_CODE, MessageUtil.MISS_USER_MSG, null);
         }
-
-        return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, user.getGroups());
+        //过滤掉inventory=-1的
+        Set<GroupBuying> groups = user.getGroups();
+        for (GroupBuying group:groups){
+            Set<Goods> tmp = group.getGoods();
+            tmp = FilterByInventory(tmp);
+            group.setGoods(tmp);
+        }
+        return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, groups);
     }
 
     @Override
@@ -104,7 +113,26 @@ public class UserServiceImpl implements UserService {
         if(user == null) {
             return MessageUtil.createMessage(MessageUtil.MISS_USER_CODE, MessageUtil.MISS_USER_MSG, null);
         }
+        Set<GroupBuying> groups = user.getCreateGroups();
+        //过滤掉inventory=-1的
+        for (GroupBuying group:groups){
+            Set<Goods> tmp = group.getGoods();
+            tmp = FilterByInventory(tmp);
+            group.setGoods(tmp);
+        }
+        return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, groups);
+    }
 
-        return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, user.getCreateGroups());
+    @Override
+    public Set<Goods> FilterByInventory(Set<Goods> sourceList){
+        List<Goods> goodsList = new ArrayList<>(sourceList);
+        Set<Goods> newSet = Sets.newHashSet();
+        for (int i=0; i<goodsList.size(); ++i){
+            Goods goods = goodsList.get(i);
+            if (goods.getInventory()>=0){
+                newSet.add(goods);
+            }
+        }
+        return newSet;
     }
 }

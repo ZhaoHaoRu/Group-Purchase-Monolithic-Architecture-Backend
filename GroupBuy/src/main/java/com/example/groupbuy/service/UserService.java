@@ -21,4 +21,6 @@ public interface UserService {
     Message<Integer> setNewAddress(int userId, String receiver, String phone, String region, String location);
 
     Message<Set<GroupBuying>> getCreatedGroup(int userId);
+
+    Set<Goods> FilterByInventory(Set<Goods> goodsList);
 }
