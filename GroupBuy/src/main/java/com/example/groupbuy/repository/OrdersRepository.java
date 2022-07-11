@@ -45,11 +45,22 @@ public interface OrdersRepository extends JpaRepository<Orders,Integer>, JpaSpec
 
     @Transactional
     @Modifying
+    @Query(value = "UPDATE user SET user.wallet = user.wallet-(SELECT SUM(order_item.goods_number*goods.price) \n" +
+            "FROM order_item NATURAL JOIN goods\n" +
+            "WHERE order_item.goods_id = goods.goods_id AND order_item.order_id = :orderId)\n" +
+            "WHERE user_id = :userId",nativeQuery = true)
+    void refundOneBack(@Param("orderId") Integer orderId, @Param("userId") Integer userId);
+
+    @Transactional
+    @Modifying
     @Query(value = "update orders set orders.state = 2 where order_id =:orderId",nativeQuery = true)
     void deleteByOrderId(@Param("orderId") Integer orderId);
 
     @Transactional
     @Modifying
     @Query(value = "update orders set orders.state = 2 where group_id = :groupId AND state=1",nativeQuery = true)
-    public void deleteByGroupId(@Param("groupId")Integer groupId);
+    void deleteByGroupId(@Param("groupId")Integer groupId);
+
+    @Query(value = "select * from orders where group_id = :groupId AND state = 0",nativeQuery = true)
+    List<Orders> getGroupAllCarts(@Param("groupId")Integer groupId);
 }

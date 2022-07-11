@@ -50,4 +50,8 @@ public interface OrderDao {
     void deleteByItemId(Integer itemId);
 
     void changeGoodsNum(Integer goods_number, Integer goods_id, Integer order_id);
+
+    List<Orders> getGroupAllCarts(Integer groupId);
+
+    void refundOneBack(Integer orderId, Integer userId);
 }

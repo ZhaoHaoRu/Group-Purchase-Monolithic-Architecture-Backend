@@ -32,4 +32,6 @@ public interface GroupDao {
     List<Goods> getGoodsByGroupId(Integer groupId);
 
     void updateGoods(Integer goodsId, String goodsInfo, BigDecimal price, Integer inventory);
+
+    void updateCartItems(Integer orderId, Integer oldGoodsId, Integer newGoodsId);
 }

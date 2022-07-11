@@ -29,4 +29,8 @@ public interface OrderItemsRepository extends JpaRepository<OrderItems,Integer>,
     @Query(value = "DELETE FROM order_item WHERE order_item_id = :itemId",nativeQuery = true)
     void deleteById(@Param("itemId") Integer itemId);
 
+    @Transactional
+    @Modifying
+    @Query(value = "update order_item set goods_id = :newGoodsId where order_id = :orderId and goods_id = :oldGoodsId",nativeQuery = true)
+    void updateCartItems(@Param("newGoodsId")Integer newGoodsId, @Param("orderId")Integer orderId, @Param("oldGoodsId")Integer oldGoodsId);
 }

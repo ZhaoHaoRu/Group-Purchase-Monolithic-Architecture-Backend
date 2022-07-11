@@ -67,10 +67,15 @@ public class OrderServiceImpl implements OrderService {
             return MessageUtil.createMessage(MessageUtil.CREATE_ORDER_ERROR_CODE,MessageUtil.MONEY_NOT_ENOUGH,resultInfo);
         }
         else {
-            //扣款
+            //用户扣款
             BigDecimal newWallet = user.getWallet();
             newWallet = newWallet.subtract(price);
             orderDao.updateWallet(newWallet, userId);
+            //团长收钱
+            User header = orderDao.findByGroupId(groupId).getUser();
+            BigDecimal headerWallet = header.getWallet();
+            headerWallet = headerWallet.add(price);
+            orderDao.updateWallet(headerWallet,header.getUserId());
             //减库存
             for (int i=0; i<itemList.size(); ++i){
                 OrderItems Item = itemList.get(i);
@@ -157,8 +162,10 @@ public class OrderServiceImpl implements OrderService {
 //        Integer orderId = OrderId.getInteger("orderId");
         Orders order = orderDao.findByOrderId(orderId);
         Integer userId = order.getUser().getUserId();
-        //退款
+        //用户被退款
         orderDao.refundOne(orderId,userId);
+        //团长的钱也减少
+        orderDao.refundOneBack(orderId,order.getGroup().getUser().getUserId());
         //删除订单
         orderDao.deleteByOrderId(orderId);
         //更新商品库存
@@ -183,12 +190,14 @@ public class OrderServiceImpl implements OrderService {
         //退款
         for (int i=0; i<ordersList.size(); ++i){
             Orders order = ordersList.get(i);
+            //用户被退款
             orderDao.refundOne(order.getOrderId(),order.getUser().getUserId());
+            //团长的钱相应的减少
+            orderDao.refundOneBack(order.getOrderId(),order.getGroup().getUser().getUserId());
         }
         //取消订单
         orderDao.deleteByGroupId(groupId);
         String result = "所有订单都已取消并已退款！";
         return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE,MessageUtil.SUCCESS,result);
     }
-
 }

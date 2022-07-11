@@ -7,6 +7,7 @@ import com.example.groupbuy.dao.OrderDao;
 import com.example.groupbuy.dao.UserDao;
 import com.example.groupbuy.entity.Goods;
 import com.example.groupbuy.entity.GroupBuying;
+import com.example.groupbuy.entity.Orders;
 import com.example.groupbuy.entity.User;
 import com.example.groupbuy.entity.VO.ChangeGoods;
 import com.example.groupbuy.entity.VO.ChangeGroup;
@@ -182,8 +183,8 @@ public class GroupServiceImpl implements GroupService {
                 groupDao.updateGoods(newGoods.getGoodsId(), newGoods.getGoodsInfo(), newGoods.getPrice(), newGoods.getInventory());
             }
             else{
-                //原商品的库存变为0
-                groupDao.updateGoods(oldGoods.getGoodsId(), oldGoods.getGoodsInfo(), oldGoods.getPrice(), 0);
+                //原商品的库存变为-1
+                groupDao.updateGoods(oldGoods.getGoodsId(), oldGoods.getGoodsInfo(), oldGoods.getPrice(), -1);
 
                 //插入新商品
                 Goods goods = new Goods();
@@ -196,6 +197,15 @@ public class GroupServiceImpl implements GroupService {
                 goods.setGoodsName(oldGoods.getGoodsName());
                 goods.setPicture(oldGoods.getPicture());
                 groupDao.saveGoods(goods);
+
+                //更新所有的购物车
+                List<Orders> CartList = orderDao.getGroupAllCarts(groupId);
+                for (int j=0; j<CartList.size(); ++j){
+                    Orders cart = CartList.get(j);
+                    Integer oldGoodsId = oldGoods.getGoodsId();
+                    Integer newGoodsId = goods.getGoodsId();
+                    groupDao.updateCartItems(cart.getOrderId(), oldGoodsId, newGoodsId);
+                }
             }
         }
         return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE,MessageUtil.SUCCESS);

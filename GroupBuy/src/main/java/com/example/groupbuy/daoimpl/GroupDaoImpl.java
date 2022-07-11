@@ -5,6 +5,7 @@ import com.example.groupbuy.entity.Goods;
 import com.example.groupbuy.entity.GroupBuying;
 import com.example.groupbuy.repository.GoodsRepository;
 import com.example.groupbuy.repository.GroupRepository;
+import com.example.groupbuy.repository.OrderItemsRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -20,6 +21,9 @@ public class GroupDaoImpl implements GroupDao {
     GroupRepository groupRepository;
     @Resource
     GoodsRepository goodsRepository;
+
+    @Resource
+    OrderItemsRepository orderItemsRepository;
 
     @Override
     public Optional<GroupBuying> getGroupById(int id) {
@@ -66,5 +70,10 @@ public class GroupDaoImpl implements GroupDao {
     @Override
     public void updateGoods(Integer goodsId, String goodsInfo, BigDecimal price, Integer inventory){
         goodsRepository.updateGoods(goodsInfo, inventory, price, goodsId);
+    }
+
+    @Override
+    public void updateCartItems(Integer orderId, Integer oldGoodsId, Integer newGoodsId){
+        orderItemsRepository.updateCartItems(newGoodsId, orderId, oldGoodsId);
     }
 }

@@ -239,4 +239,14 @@ public class OrderDaoImpl implements OrderDao {
     public void changeGoodsNum(Integer goods_number, Integer goods_id, Integer order_id){
         orderItemsRepository.changeGoodsNum(goods_number,goods_id,order_id);
     }
+
+    @Override
+    public List<Orders> getGroupAllCarts(Integer groupId){
+        return ordersRepository.getGroupAllCarts(groupId);
+    }
+
+    @Override
+    public void refundOneBack(Integer orderId, Integer userId){
+        ordersRepository.refundOneBack(orderId, userId);
+    }
 }
