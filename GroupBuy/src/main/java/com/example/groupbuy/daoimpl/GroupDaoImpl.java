@@ -58,8 +58,8 @@ public class GroupDaoImpl implements GroupDao {
 
     @Override
     public void updateGroup(Integer groupId, String groupTitle, String groupInfo, String category,
-                                Timestamp startTime, Integer duration, String delivery){
-        groupRepository.updateGroup(category, delivery, duration, groupInfo, groupTitle, startTime, groupId);
+                                Timestamp startTime, Integer duration){
+        groupRepository.updateGroup(category, duration, groupInfo, groupTitle, startTime, groupId);
     }
 
     @Override

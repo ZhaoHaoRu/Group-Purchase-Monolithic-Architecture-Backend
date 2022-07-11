@@ -162,7 +162,7 @@ public class GroupServiceImpl implements GroupService {
             tmp = FilterByInventory(tmp);
             group.setGoods(tmp);
         }
-        
+
         return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, groups);
     }
 
@@ -191,22 +191,21 @@ public class GroupServiceImpl implements GroupService {
         String groupInfo = groupBuying.getGroupInfo();
         String category = groupBuying.getCategory();
         Integer duration = groupBuying.getDuration();
-        String delivery = groupBuying.getDelivery();
         //这个goodsList接受的是前端传回来的goodsList所以不会有inventory为-1的，多次修改应该是可以的
-        List<ChangeGoods> goodsList = groupBuying.getGoodsList();
+        List<ChangeGoods> goodsList = groupBuying.getGoods();
         //时间戳转换
         String StrTime = groupBuying.getStartTime();
         Timestamp startTime = Timestamp.valueOf(StrTime);
 
         //更新团购信息
-        groupDao.updateGroup(groupId, groupTitle, groupInfo, category, startTime, duration, delivery);
+        groupDao.updateGroup(groupId, groupTitle, groupInfo, category, startTime, duration);
 
         //更新商品
         for (int i = 0; i < goodsList.size(); ++i) {
             ChangeGoods newGoods = goodsList.get(i);
             Goods oldGoods = orderDao.findByGoodsId(newGoods.getGoodsId());
             //如果商品价格不改变，那么可以在原商品上面直接更新
-            if (Objects.equals(newGoods.getPrice(), oldGoods.getPrice())) {
+            if (newGoods.getPrice().compareTo(oldGoods.getPrice())==0) {
                 groupDao.updateGoods(newGoods.getGoodsId(), newGoods.getGoodsInfo(), newGoods.getPrice(), newGoods.getInventory());
             } else {
                 //原商品的库存变为-1

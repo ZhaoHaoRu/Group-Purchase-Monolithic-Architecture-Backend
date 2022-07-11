@@ -21,7 +21,5 @@ public class ChangeGroup {
 
     private Integer duration;
 
-    private String delivery;
-
-    private List<ChangeGoods> goodsList;
+    private List<ChangeGoods> goods;
 }

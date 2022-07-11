@@ -15,4 +15,9 @@ public class ChangeGoods {
 
     private Integer inventory;
 
+    private String goodsName;
+
+    private String picture;
+
+    private Integer group;
 }

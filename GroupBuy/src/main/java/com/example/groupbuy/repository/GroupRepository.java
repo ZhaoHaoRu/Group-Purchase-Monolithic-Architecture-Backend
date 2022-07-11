@@ -30,9 +30,9 @@ public interface GroupRepository extends JpaRepository<GroupBuying, Integer>, Jp
 
     @Transactional
     @Modifying
-    @Query(value = "update groupBuying set category = :category, delivery = :delivery, duration = :duration," +
+    @Query(value = "update groupBuying set category = :category, duration = :duration," +
             "group_info = :groupInfo, group_title = :groupTitle, start_time = :startTime where group_id = :groupId",nativeQuery = true)
-    void updateGroup(@Param("category")String category, @Param("delivery")String delivery, @Param("duration")Integer duration,
-                     @Param("groupInfo")String groupInfo, @Param("group_title")String groupTitle, @Param("start_time")Timestamp startTime,
-                     @Param("group_id")Integer groupId);
+    void updateGroup(@Param("category")String category, @Param("duration")Integer duration,
+                     @Param("groupInfo")String groupInfo, @Param("group_title")String groupTitle,
+                     @Param("start_time")Timestamp startTime, @Param("group_id")Integer groupId);
 }

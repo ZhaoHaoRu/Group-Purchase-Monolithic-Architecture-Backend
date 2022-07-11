@@ -27,7 +27,7 @@ public interface GroupDao {
     Set<GroupBuying> findAll();
 
     void updateGroup(Integer groupId, String groupTitle, String groupInfo, String category,
-                     Timestamp startTime, Integer duration, String delivery);
+                     Timestamp startTime, Integer duration);
 
     List<Goods> getGoodsByGroupId(Integer groupId);
 
