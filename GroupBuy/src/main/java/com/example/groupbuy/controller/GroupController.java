@@ -20,7 +20,7 @@ public class GroupController {
     GroupService groupService;
 
     @GetMapping("/getGroupById")
-    @ApiOperation("通过id获取团购")
+    @ApiOperation("通过团购id获取团购")
     public Message<GroupBuying> getGroupById(@RequestParam int id) {
         return groupService.getGroupById(id);
     }

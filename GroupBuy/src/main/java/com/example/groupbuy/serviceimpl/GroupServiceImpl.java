@@ -15,6 +15,7 @@ import com.example.groupbuy.service.GroupService;
 import com.example.groupbuy.utils.JpaUtils;
 import com.example.groupbuy.utils.messageUtils.Message;
 import com.example.groupbuy.utils.messageUtils.MessageUtil;
+import com.google.common.collect.Sets;
 import org.springframework.stereotype.Service;
 import com.example.groupbuy.service.*;
 
@@ -37,9 +38,14 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Message<GroupBuying> getGroupById(int id) {
-        Optional<GroupBuying> groupBuying =  groupDao.getGroupById(id);
-        if(groupBuying.isPresent()) {
-            return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE, MessageUtil.SUCCESS, groupBuying.get());
+        Optional<GroupBuying> groupBuying = groupDao.getGroupById(id);
+        if (groupBuying.isPresent()) {
+            //过滤掉inventory为-1的
+            GroupBuying result = groupBuying.get();
+            Set<Goods> tmp = result.getGoods();
+            tmp = FilterByInventory(tmp);
+            result.setGoods(tmp);
+            return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE, MessageUtil.SUCCESS, result);
         } else {
             return MessageUtil.createMessage(MessageUtil.MISS_GROUP_CODE, MessageUtil.MISS_GROUP_MSG, null);
         }
@@ -50,7 +56,7 @@ public class GroupServiceImpl implements GroupService {
         GroupBuying group = new GroupBuying();
         group.setGroupTitle(groupBuying.get("groupTitle").toString());
         group.setGroupInfo(groupBuying.get("groupInfo").toString());
-        int userId =  Integer.parseInt(groupBuying.get("userId").toString());
+        int userId = Integer.parseInt(groupBuying.get("userId").toString());
         User user = userDao.findById(userId);
         group.setUser(user);
         group.setDelivery(groupBuying.get("delivery").toString());
@@ -62,14 +68,14 @@ public class GroupServiceImpl implements GroupService {
         GroupBuying groupAfterCreate = groupDao.save(group);
 
         JSONArray goodsArray = groupBuying.getJSONArray("goods");
-        if(goodsArray.size() > 0) {
-            for(int i = 0; i < goodsArray.size(); ++i) {
-                Map<String, String> obj= (Map<String, String>) goodsArray.get(i);
+        if (goodsArray.size() > 0) {
+            for (int i = 0; i < goodsArray.size(); ++i) {
+                Map<String, String> obj = (Map<String, String>) goodsArray.get(i);
                 Goods goods = new Goods();
                 goods.setGoodsInfo(obj.get("goodsInfo"));
                 goods.setGoodsName(obj.get("goodsName"));
                 goods.setPicture(obj.get("picture"));
-                BigDecimal bd= new BigDecimal(obj.get("price"));
+                BigDecimal bd = new BigDecimal(obj.get("price"));
                 goods.setPrice(bd);
                 goods.setInventory(Integer.parseInt(obj.get("inventory")));
                 goods.setGroup(groupAfterCreate);
@@ -77,7 +83,7 @@ public class GroupServiceImpl implements GroupService {
             }
         }
         GroupBuying newGroup = groupDao.save(groupAfterCreate);
-        if(newGroup != null) {
+        if (newGroup != null) {
             return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, newGroup);
         } else {
             return MessageUtil.createMessage(MessageUtil.CREATE_GROUP_ERROR_CODE, MessageUtil.CREATE_GROUP_ERROR, null);
@@ -87,17 +93,17 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Message<User> collectGroup(Integer userId, Integer groupId) {
         Optional<GroupBuying> group = groupDao.getGroupById(groupId);
-        if(!group.isPresent()) {
+        if (!group.isPresent()) {
             return MessageUtil.createMessage(MessageUtil.MISS_GROUP_CODE, MessageUtil.MISS_GROUP_MSG, null);
         }
         User user = userDao.findById(userId);
-        if(user == null) {
+        if (user == null) {
             return MessageUtil.createMessage(MessageUtil.MISS_USER_CODE, MessageUtil.MISS_USER_MSG, null);
         }
         Set<GroupBuying> collects = user.getGroups();
 
         // 这里的逻辑是如果是已经收藏的团购，这样相当于取消收藏
-        if(collects.contains(group.get()))
+        if (collects.contains(group.get()))
             collects.remove(group.get());
         else
             collects.add(group.get());
@@ -111,7 +117,13 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Message<Set<GroupBuying>> getGroupByTag(String category) {
         Set<GroupBuying> groups = groupDao.selectGroupsByTag(category);
-        if(groups != null) {
+        if (groups != null) {
+            //过滤掉inventory=-1的
+            for (GroupBuying group:groups){
+                Set<Goods> tmp = group.getGoods();
+                tmp = FilterByInventory(tmp);
+                group.setGoods(tmp);
+            }
             return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, groups);
         } else {
             return MessageUtil.createMessage(MessageUtil.MISS_TAG_CODE, MessageUtil.MISS_TAG_MSG, null);
@@ -121,6 +133,12 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Message<Set<GroupBuying>> getAllGroup() {
         Set<GroupBuying> groups = groupDao.findAll();
+        //过滤掉inventory=-1的
+        for (GroupBuying group:groups){
+            Set<Goods> tmp = group.getGoods();
+            tmp = FilterByInventory(tmp);
+            group.setGoods(tmp);
+        }
         return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, groups);
     }
 
@@ -133,56 +151,64 @@ public class GroupServiceImpl implements GroupService {
         Set<GroupBuying> groups = user.getGroups();
 
         // 此处只会选择还有效的团购
-        for (GroupBuying group:groups) {
-            if(group.getState() == 0)
+        for (GroupBuying group : groups) {
+            if (group.getState() == 0)
                 groups.remove(group);
         }
+
+        //过滤掉inventory=-1的
+        for (GroupBuying group:groups){
+            Set<Goods> tmp = group.getGoods();
+            tmp = FilterByInventory(tmp);
+            group.setGoods(tmp);
+        }
+        
         return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, groups);
     }
 
 
     @Override
-    public Message<String> endGroup(int groupId){
+    public Message<String> endGroup(int groupId) {
         groupDao.endGroup(groupId);
-        return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE,MessageUtil.SUCCESS);
+        return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE, MessageUtil.SUCCESS);
     }
 
 
     @Override
-    public Message<String> deleteGroup(int groupId){
+    public Message<String> deleteGroup(int groupId) {
         Message<String> result = orderService.deleteOrderByGroupId(groupId);
-        if(result.getStatus() != 1)
+        if (result.getStatus() != 1)
             return MessageUtil.createMessage(MessageUtil.FAIL_CODE, MessageUtil.FAIL);
         groupDao.deleteGroup(groupId);
-        return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE,MessageUtil.SUCCESS);
+        return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE, MessageUtil.SUCCESS);
     }
 
 
     @Override
-    public  Message<String> changeGroup(ChangeGroup groupBuying){
+    public Message<String> changeGroup(ChangeGroup groupBuying) {
         Integer groupId = groupBuying.getGroupId();
         String groupTitle = groupBuying.getGroupTitle();
         String groupInfo = groupBuying.getGroupInfo();
         String category = groupBuying.getCategory();
         Integer duration = groupBuying.getDuration();
         String delivery = groupBuying.getDelivery();
+        //这个goodsList接受的是前端传回来的goodsList所以不会有inventory为-1的，多次修改应该是可以的
         List<ChangeGoods> goodsList = groupBuying.getGoodsList();
         //时间戳转换
         String StrTime = groupBuying.getStartTime();
         Timestamp startTime = Timestamp.valueOf(StrTime);
 
         //更新团购信息
-        groupDao.updateGroup(groupId,groupTitle,groupInfo,category,startTime,duration,delivery);
+        groupDao.updateGroup(groupId, groupTitle, groupInfo, category, startTime, duration, delivery);
 
         //更新商品
-        for (int i=0; i<goodsList.size(); ++i){
+        for (int i = 0; i < goodsList.size(); ++i) {
             ChangeGoods newGoods = goodsList.get(i);
             Goods oldGoods = orderDao.findByGoodsId(newGoods.getGoodsId());
             //如果商品价格不改变，那么可以在原商品上面直接更新
-            if (Objects.equals(newGoods.getPrice(), oldGoods.getPrice())){
+            if (Objects.equals(newGoods.getPrice(), oldGoods.getPrice())) {
                 groupDao.updateGoods(newGoods.getGoodsId(), newGoods.getGoodsInfo(), newGoods.getPrice(), newGoods.getInventory());
-            }
-            else{
+            } else {
                 //原商品的库存变为-1
                 groupDao.updateGoods(oldGoods.getGoodsId(), oldGoods.getGoodsInfo(), oldGoods.getPrice(), -1);
 
@@ -200,7 +226,7 @@ public class GroupServiceImpl implements GroupService {
 
                 //更新所有的购物车
                 List<Orders> CartList = orderDao.getGroupAllCarts(groupId);
-                for (int j=0; j<CartList.size(); ++j){
+                for (int j = 0; j < CartList.size(); ++j) {
                     Orders cart = CartList.get(j);
                     Integer oldGoodsId = oldGoods.getGoodsId();
                     Integer newGoodsId = goods.getGoodsId();
@@ -208,7 +234,7 @@ public class GroupServiceImpl implements GroupService {
                 }
             }
         }
-        return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE,MessageUtil.SUCCESS);
+        return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS);
 //        int groupId =  groupBuying.getInteger("groupId");
 //        GroupBuying groupById = groupDao.getGroupById(groupId).orElseThrow(() -> new IllegalArgumentException("错误"));
 //
@@ -274,4 +300,16 @@ public class GroupServiceImpl implements GroupService {
 //        return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE,MessageUtil.SUCCESS);
     }
 
+    @Override
+    public Set<Goods> FilterByInventory(Set<Goods> sourceList){
+        List<Goods> goodsList = new ArrayList<>(sourceList);
+        Set<Goods> newSet = Sets.newHashSet();
+        for (int i=0; i<goodsList.size(); ++i){
+            Goods goods = goodsList.get(i);
+            if (goods.getInventory()>=0){
+                newSet.add(goods);
+            }
+        }
+        return newSet;
+    }
 }
