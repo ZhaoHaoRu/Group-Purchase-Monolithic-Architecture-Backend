@@ -62,6 +62,7 @@ public class UserServiceImpl implements UserService {
         if(user == null) {
             return MessageUtil.createMessage(MessageUtil.MISS_USER_CODE, MessageUtil.MISS_USER_MSG, null);
         }
+
         //过滤掉inventory=-1的
         Set<GroupBuying> groups = user.getGroups();
         for (GroupBuying group:groups){
@@ -114,6 +115,10 @@ public class UserServiceImpl implements UserService {
             return MessageUtil.createMessage(MessageUtil.MISS_USER_CODE, MessageUtil.MISS_USER_MSG, null);
         }
         Set<GroupBuying> groups = user.getCreateGroups();
+
+        //过滤掉已经删除的团购
+        groups.removeIf(group -> group.getState() == 0);
+
         //过滤掉inventory=-1的
         for (GroupBuying group:groups){
             Set<Goods> tmp = group.getGoods();
