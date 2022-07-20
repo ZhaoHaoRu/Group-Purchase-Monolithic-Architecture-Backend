@@ -63,7 +63,7 @@ public class GroupDaoImpl implements GroupDao {
     }
 
     @Override
-    public List<Goods> getGoodsByGroupId(Integer groupId){
+    public Set<Goods> getGoodsByGroupId(Integer groupId){
         return goodsRepository.getGoodsByGroupId(groupId);
     }
 
@@ -75,5 +75,20 @@ public class GroupDaoImpl implements GroupDao {
     @Override
     public void updateCartItems(Integer orderId, Integer oldGoodsId, Integer newGoodsId){
         orderItemsRepository.updateCartItems(newGoodsId, orderId, oldGoodsId);
+    }
+
+    @Override
+    public Set<GroupBuying> queryAllSecKillGoods() {
+        return groupRepository.queryAllSecKillGoods();
+    }
+
+    @Override
+    public Goods getGoodsById(Integer goodsId) {
+        return goodsRepository.findByGoodsId(goodsId);
+    }
+
+    @Override
+    public Integer updateInventory(Integer goodsNumber, Integer goodsId) {
+        return goodsRepository.updateInventory(goodsNumber, goodsId);
     }
 }

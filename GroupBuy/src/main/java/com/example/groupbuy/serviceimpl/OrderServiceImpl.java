@@ -38,7 +38,6 @@ public class OrderServiceImpl implements OrderService {
     /*
     下订单
      */
-    @Transactional
     @Override
     public Message<String> addOrder(int groupId,int userId,int addressId,String time){
 //        Integer groupId = info.getInteger("groupId");

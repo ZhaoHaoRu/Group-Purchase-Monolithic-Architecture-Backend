@@ -3,6 +3,7 @@ package com.example.groupbuy.dao;
 import com.example.groupbuy.entity.GroupBuying;
 import com.example.groupbuy.entity.Goods;
 import com.example.groupbuy.entity.GroupBuying;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -17,6 +18,7 @@ public interface GroupDao {
     void endGroup(int groupId);
 
     void deleteGroup(int groupId);
+
     GroupBuying save(GroupBuying groupBuying);
 
 
@@ -29,9 +31,15 @@ public interface GroupDao {
     void updateGroup(Integer groupId, String groupTitle, String groupInfo, String category,
                      Timestamp startTime, Integer duration);
 
-    List<Goods> getGoodsByGroupId(Integer groupId);
+    Set<Goods> getGoodsByGroupId(Integer groupId);
 
     void updateGoods(Integer goodsId, String goodsInfo, BigDecimal price, Integer inventory);
 
     void updateCartItems(Integer orderId, Integer oldGoodsId, Integer newGoodsId);
+
+    Set<GroupBuying> queryAllSecKillGoods();
+
+    Goods getGoodsById(Integer goodsId);
+
+    Integer updateInventory(Integer goodsNumber, Integer goodsId);
 }

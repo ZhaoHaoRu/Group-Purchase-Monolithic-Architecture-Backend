@@ -1,7 +1,9 @@
 package com.example.groupbuy.repository;
 
 
+import com.example.groupbuy.entity.GroupBuying;
 import com.example.groupbuy.entity.Orders;
+import com.example.groupbuy.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders,Integer>, JpaSpecificationExecutor<Orders> {
@@ -63,4 +66,6 @@ public interface OrdersRepository extends JpaRepository<Orders,Integer>, JpaSpec
 
     @Query(value = "select * from orders where group_id = :groupId AND state = 0",nativeQuery = true)
     List<Orders> getGroupAllCarts(@Param("groupId")Integer groupId);
+
+    Set<Orders> findOrdersByGroupAndUser(GroupBuying group, User user);
 }

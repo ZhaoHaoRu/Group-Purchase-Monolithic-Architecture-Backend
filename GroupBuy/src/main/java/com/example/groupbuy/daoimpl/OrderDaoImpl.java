@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class OrderDaoImpl implements OrderDao {
@@ -201,6 +202,11 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public void addToWallet(BigDecimal newWallet, Integer userId) {
+        usersRepository.addToWallet(newWallet, userId);
+    }
+
+    @Override
     public void changeInventory(Integer inventory, Integer goodsId){
         goodsRepository.changeInventory(inventory,goodsId);
     }
@@ -248,5 +254,10 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public void refundOneBack(Integer orderId, Integer userId){
         ordersRepository.refundOneBack(orderId, userId);
+    }
+
+    @Override
+    public Set<Orders> isOrdered(GroupBuying groupBuying, User user) {
+        return ordersRepository.findOrdersByGroupAndUser(groupBuying, user);
     }
 }

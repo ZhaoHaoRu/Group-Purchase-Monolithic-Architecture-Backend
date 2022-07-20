@@ -34,4 +34,6 @@ public interface GroupService {
     Message<Set<GroupBuying>> getCollectedGroup(Integer userId);
 
     Set<Goods> FilterByInventory(Set<Goods> goodsList);
+
+
 }

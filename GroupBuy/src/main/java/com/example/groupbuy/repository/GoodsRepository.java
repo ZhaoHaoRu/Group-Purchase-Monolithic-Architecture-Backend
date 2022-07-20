@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface GoodsRepository extends JpaRepository<Goods,Integer>, JpaSpecificationExecutor<Goods> {
@@ -24,7 +25,7 @@ public interface GoodsRepository extends JpaRepository<Goods,Integer>, JpaSpecif
     void changeInventory(@Param("inventory") Integer inventory, @Param("goodsId") Integer goodsId);
 
     @Query(value = "select * from goods where group_id = :groupId",nativeQuery = true)
-    List<Goods> getGoodsByGroupId(@Param("groupId")Integer groupId);
+    Set<Goods> getGoodsByGroupId(@Param("groupId")Integer groupId);
 
     @Transactional
     @Modifying
@@ -32,4 +33,11 @@ public interface GoodsRepository extends JpaRepository<Goods,Integer>, JpaSpecif
             "where goods_id = :goodsId",nativeQuery = true)
     void updateGoods(@Param("goodsInfo")String goodsInfo, @Param("inventory")Integer inventory,
                      @Param("price")BigDecimal price, @Param("goodsId")Integer goodsId);
+
+
+    // 返回值为影响的行数
+    @Transactional
+    @Modifying
+    @Query(value = "update goods set inventory = inventory - :goodsNumber where goods_id = :goodsId",nativeQuery = true)
+    Integer updateInventory(@Param("goodsNumber") Integer goodsNumber, @Param("goodsId") Integer goodsId);
 }

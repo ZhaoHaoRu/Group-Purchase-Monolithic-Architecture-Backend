@@ -29,7 +29,7 @@ public class Goods {
     private Integer goodsId;
 
     //商品所属的团ID，外键关联
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     @Comment("商品所属团购ID")
     @ApiModelProperty(value = "商品所属团购ID")

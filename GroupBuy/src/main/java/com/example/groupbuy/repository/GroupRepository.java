@@ -35,4 +35,7 @@ public interface GroupRepository extends JpaRepository<GroupBuying, Integer>, Jp
     void updateGroup(@Param("category")String category, @Param("duration")Integer duration,
                      @Param("groupInfo")String groupInfo, @Param("group_title")String groupTitle,
                      @Param("start_time")Timestamp startTime, @Param("group_id")Integer groupId);
+
+    @Query(value = "from GroupBuying where state = 2")
+    Set<GroupBuying> queryAllSecKillGoods();
 }
