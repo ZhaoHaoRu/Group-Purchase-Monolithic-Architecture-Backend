@@ -206,8 +206,51 @@ public class OrderDaoImpl implements OrderDao {
         newObject2.put("id",1);
         newObject2.put("title","退款订单");
         newObject2.put("data",dataList2);
+
+        /*统计分析所需要的数据*/
+        JSONObject newObject3 = new JSONObject();
+        newObject3.put("id",2);
+        newObject3.put("title","统计分析");
+        List<JSONObject> dataList3 = new ArrayList<>();
+        int x=0,y=0;
+        JSONObject newObject4 = new JSONObject();
+        newObject4.put("id",0);
+        newObject4.put("groupTitle","订单数");
+        newObject4.put("orderPrice",(m+n));
+        dataList3.add(newObject4);
+
+
+        JSONObject newObject5 = new JSONObject();
+        newObject5.put("id",1);
+        newObject5.put("groupTitle","下单人数");
+        newObject5.put("orderPrice",m);
+        dataList3.add(newObject5);
+
+
+        for (JSONObject json : dataList1){
+            x+=json.getInteger("orderPrice");
+        }
+        JSONObject newObject6 = new JSONObject();
+        newObject6.put("id",2);
+        newObject6.put("groupTitle","总销售金额");
+        newObject6.put("orderPrice",x);
+        dataList3.add(newObject6);
+
+
+        for (JSONObject json : dataList2){
+            y+=json.getInteger("orderPrice");
+        }
+        JSONObject newObject7 = new JSONObject();
+        newObject7.put("id",3);
+        newObject7.put("groupTitle","总退款金额");
+        newObject7.put("orderPrice",y);
+        dataList3.add(newObject7);
+
+
+        newObject3.put("data",dataList3);
         finaldata.add(newObject1);
         finaldata.add(newObject2);
+        finaldata.add(newObject3);
         return finaldata;
     }
 
