@@ -52,4 +52,21 @@ public class UserController {
         return userService.getUserAddress(id);
     }
 
+    @GetMapping("/setNewAddress")
+    @ApiOperation("新增用户地址")
+    public Message<Integer> setNewAddress(@RequestParam("userId") int userId, @RequestParam("receiver") String receiver, @RequestParam("phone") String phone, @RequestParam("region") String region, @RequestParam("location") String location) {
+        return userService.setNewAddress(userId, receiver, phone, region, location);
+    }
+
+    @GetMapping("/getCreatedGroup")
+    @ApiOperation("获取用户创建的团购")
+    public Message<Set<GroupBuying>> getCreatedGroup(@RequestParam("userId") int userId) {
+        return userService.getCreatedGroup(userId);
+    }
+
+    @GetMapping("/recommend")
+    @ApiOperation("向用户推荐团购")
+    public Message<Set<GroupBuying>> groupRecommend(@RequestParam("userId") int userId) {
+        return userService.RecommendGroup(userId);
+    }
 }

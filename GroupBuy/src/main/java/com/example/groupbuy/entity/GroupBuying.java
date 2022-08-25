@@ -71,14 +71,15 @@ public class GroupBuying {
     private Integer duration;
 
     //团购图片
-    @Basic
-    @Column(name = "picture")
+//    @Basic
+//    @Column(name = "picture")
+    @Transient
     @Comment("团购图片")
     @ApiModelProperty(value = "团购图片")
     private String picture;
 
     /**
-     * 团购状态： 0-团购已取消    1-普通团购   2-秒杀团购
+     * 团购状态： 0-团购已取消    1-普通团购   2-秒杀团购   3-团购已结束
      */
     @Basic
     @Column(name = "state")
@@ -93,6 +94,12 @@ public class GroupBuying {
     @ApiModelProperty(value = "团购类型")
     private String category;
 
+    @Basic
+    @Column(name = "popularity")
+    @Comment("团购的热卖指数")
+    @ApiModelProperty(value = "团购的热卖指数")
+    private Integer popularity = 0;     // 初始情况下为0
+
     @JsonIgnore
     @ManyToMany(mappedBy = "groups")
     private Set<User> users;
@@ -105,4 +112,5 @@ public class GroupBuying {
     @JsonIgnore
     @OneToMany(mappedBy = "group",fetch = FetchType.EAGER)
     private Set<Orders> orders;
+
 }

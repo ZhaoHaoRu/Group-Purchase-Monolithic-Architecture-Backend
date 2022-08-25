@@ -3,6 +3,7 @@ package com.example.groupbuy.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.example.groupbuy.entity.GroupBuying;
 import com.example.groupbuy.entity.User;
+import com.example.groupbuy.entity.VO.ChangeGroup;
 import com.example.groupbuy.service.GroupService;
 import com.example.groupbuy.utils.messageUtils.Message;
 import io.swagger.annotations.Api;
@@ -19,7 +20,7 @@ public class GroupController {
     GroupService groupService;
 
     @GetMapping("/getGroupById")
-    @ApiOperation("通过id获取团购")
+    @ApiOperation("通过团购id获取团购")
     public Message<GroupBuying> getGroupById(@RequestParam int id) {
         return groupService.getGroupById(id);
     }
@@ -60,7 +61,6 @@ public class GroupController {
     @GetMapping("/endGroup")
     @ApiOperation("结束团购")
     public Message<String> endGroup(@RequestParam int groupId){
-
         return groupService.endGroup(groupId);
     }
 
@@ -73,8 +73,7 @@ public class GroupController {
 
     @PostMapping("/changeGroup")
     @ApiOperation("修改团购（必须传回ID)")
-    public Message<String> changeGroup(@RequestBody JSONObject groupBuying){
-
+    public Message<String> changeGroup(@RequestBody ChangeGroup groupBuying){
         return groupService.changeGroup(groupBuying);
     }
 

@@ -27,4 +27,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Modifying
     @Query(value = "update user set wallet = :newWallet where user_id = :userId", nativeQuery = true)
     void updateWallet(@Param("newWallet") BigDecimal newWallet, @Param("userId") Integer userId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update user set wallet = wallet + :newWallet where user_id = :userId", nativeQuery = true)
+    void addToWallet(@Param("newWallet") BigDecimal newWallet, @Param("userId") Integer userId);
 }

@@ -24,7 +24,7 @@ public class Orders {
     //所属团购的ID
     @ManyToOne(fetch= FetchType.EAGER)
     @JoinColumn(name = "group_id")
-    @ApiModelProperty(value = "用户信息")
+    @ApiModelProperty(value = "团购信息")
     private GroupBuying group;
 
     //所属用户的ID

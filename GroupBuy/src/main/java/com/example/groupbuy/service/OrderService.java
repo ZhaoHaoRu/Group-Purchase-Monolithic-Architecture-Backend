@@ -9,6 +9,8 @@ public interface OrderService {
 
     Message<List<JSONObject>> getOrderByUserId(int userId);
 
+    Message<List<JSONObject>> getOrderInfo(int userId);
+
     Message<List<JSONObject>> getOrderByGroupId(int groupId);
 
     Message<String> addOrder(int groupId,int userId,int addressId,String time);

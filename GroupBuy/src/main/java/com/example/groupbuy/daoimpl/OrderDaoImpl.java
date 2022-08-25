@@ -2,6 +2,7 @@ package com.example.groupbuy.daoimpl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.groupbuy.dao.OrderDao;
+import com.example.groupbuy.dao.GroupDao;
 import com.example.groupbuy.entity.*;
 import com.example.groupbuy.repository.*;
 import com.example.groupbuy.utils.messageUtils.Message;
@@ -9,11 +10,12 @@ import com.example.groupbuy.utils.messageUtils.MessageUtil;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class OrderDaoImpl implements OrderDao {
@@ -33,7 +35,13 @@ public class OrderDaoImpl implements OrderDao {
     OrderItemsRepository orderItemsRepository;
 
     @Resource
-    AddressesRepository addressesRepository;
+    GoodsPicRepository goodsPicRepository;
+
+    @Resource
+    GroupPicRepository groupPicRepository;
+
+    @Resource
+    GroupDao groupDao;
 
     @Override
     public List<JSONObject> getOrderByUserId(int userId){
@@ -70,7 +78,17 @@ public class OrderDaoImpl implements OrderDao {
                 itemInfo.put("goodsInfo",goods.getGoodsInfo());
                 itemInfo.put("price",goods.getPrice());
                 itemInfo.put("number",item.getGoodsNumber());
-                itemInfo.put("picture",goods.getPicture());
+                /**
+                 * 此处获取团购商品对应的图片
+                 */
+                if(goods.getPicture() != null) {
+                    itemInfo.put("picture", goods.getPicture());
+                } else {
+                    GoodsPic goodsPic = goodsPicRepository.findByGoodsId(goods.getGoodsId());
+                    if(goodsPic != null) {
+                        itemInfo.put("picture", goodsPic.getPicture());
+                    }
+                }
                 itemInfoList.add(itemInfo);
                 BigDecimal unitPrice = goods.getPrice();
                 unitPrice = unitPrice.multiply(BigDecimal.valueOf(item.getGoodsNumber()));
@@ -81,6 +99,116 @@ public class OrderDaoImpl implements OrderDao {
             dataList.add(newObject);
         }
         return dataList;
+    }
+    @Override
+    public List<JSONObject> getOrderInfo(int userId){
+//        String strId = UserId.getString("userId");
+//        Integer userId = Integer.parseInt(strId);
+        List<Orders> orderList = ordersRepository.findOrderByTuanzhangId(userId);
+        List<JSONObject> dataList1 = new ArrayList<>();
+        List<JSONObject> dataList2 = new ArrayList<>();
+        int m = 0,n=0;
+        for (int i=0; i<orderList.size(); ++i){
+            Orders order = orderList.get(i);
+            JSONObject newObject1 = new JSONObject();
+            JSONObject newObject2 = new JSONObject();
+            Address address = order.getAddress();
+            GroupBuying group = order.getGroup();
+            if(order.getState()==1){
+            newObject1.put("id",m);
+            newObject1.put("groupTitle",group.getGroupTitle());
+            m++;
+            //newObject.put("groupId",group.getGroupId());
+            //newObject.put("headerName",group.getUser().getUserName());
+            //newObject.put("headerId",group.getUser().getUserId());
+            //newObject.put("delivery",group.getDelivery());
+            //该订单的所有订单项
+            List<OrderItems> itemList = orderItemsRepository.findItemsByOrderId(order.getOrderId());
+            List<JSONObject> itemInfoList = new ArrayList<>();
+            BigDecimal totalPrice = BigDecimal.valueOf(0);
+            for (int j=0; j<itemList.size(); ++j){
+                OrderItems item = itemList.get(j);
+                JSONObject itemInfo = new JSONObject();
+                Goods goods = item.getGood();
+                //itemInfo.put("goodsName",goods.getGoodsName());
+                //itemInfo.put("goodsInfo",goods.getGoodsInfo());
+                //itemInfo.put("price",goods.getPrice());
+                //itemInfo.put("number",item.getGoodsNumber());
+                /**
+                 * 此处获取团购商品对应的图片
+                 */
+                if(goods.getPicture() != null) {
+                    itemInfo.put("picture", goods.getPicture());
+                } else {
+                    GoodsPic goodsPic = goodsPicRepository.findByGoodsId(goods.getGoodsId());
+                    if(goodsPic != null) {
+                        itemInfo.put("picture", goodsPic.getPicture());
+                    }
+                }
+                itemInfoList.add(itemInfo);
+                BigDecimal unitPrice = goods.getPrice();
+                unitPrice = unitPrice.multiply(BigDecimal.valueOf(item.getGoodsNumber()));
+                totalPrice = totalPrice.add(unitPrice);
+            }
+            //newObject.put("orderItems",itemInfoList);
+            newObject1.put("orderPrice",totalPrice);
+            dataList1.add(newObject1);
+            }
+            else{
+                newObject2.put("id",n);
+                newObject2.put("groupTitle",group.getGroupTitle());
+                n++;
+                //newObject.put("groupId",group.getGroupId());
+                //newObject.put("headerName",group.getUser().getUserName());
+                //newObject.put("headerId",group.getUser().getUserId());
+                //newObject.put("delivery",group.getDelivery());
+                //该订单的所有订单项
+                List<OrderItems> itemList = orderItemsRepository.findItemsByOrderId(order.getOrderId());
+                List<JSONObject> itemInfoList = new ArrayList<>();
+                BigDecimal totalPrice = BigDecimal.valueOf(0);
+                for (int j=0; j<itemList.size(); ++j){
+                    OrderItems item = itemList.get(j);
+                    JSONObject itemInfo = new JSONObject();
+                    Goods goods = item.getGood();
+                    //itemInfo.put("goodsName",goods.getGoodsName());
+                    //itemInfo.put("goodsInfo",goods.getGoodsInfo());
+                    //itemInfo.put("price",goods.getPrice());
+                    //itemInfo.put("number",item.getGoodsNumber());
+                    /**
+                     * 此处获取团购商品对应的图片
+                     */
+                    if(goods.getPicture() != null) {
+                        itemInfo.put("picture", goods.getPicture());
+                    } else {
+                        GoodsPic goodsPic = goodsPicRepository.findByGoodsId(goods.getGoodsId());
+                        if(goodsPic != null) {
+                            itemInfo.put("picture", goodsPic.getPicture());
+                        }
+                    }
+                    itemInfoList.add(itemInfo);
+                    BigDecimal unitPrice = goods.getPrice();
+                    unitPrice = unitPrice.multiply(BigDecimal.valueOf(item.getGoodsNumber()));
+                    totalPrice = totalPrice.add(unitPrice);
+                }
+                //newObject.put("orderItems",itemInfoList);
+                newObject2.put("orderPrice",totalPrice);
+                dataList2.add(newObject2);
+            }
+
+        }
+        List<JSONObject> finaldata = new ArrayList<>();
+        JSONObject newObject1 = new JSONObject();
+        newObject1.put("id",0);
+        newObject1.put("title","销售订单");
+        newObject1.put("data",dataList1);
+
+        JSONObject newObject2 = new JSONObject();
+        newObject2.put("id",1);
+        newObject2.put("title","退款订单");
+        newObject2.put("data",dataList2);
+        finaldata.add(newObject1);
+        finaldata.add(newObject2);
+        return finaldata;
     }
 
     @Override
@@ -113,7 +241,18 @@ public class OrderDaoImpl implements OrderDao {
                 itemInfo.put("goodsInfo",goods.getGoodsInfo());
                 itemInfo.put("price",goods.getPrice());
                 itemInfo.put("number",item.getGoodsNumber());
-                itemInfo.put("picture",goods.getPicture());
+//                itemInfo.put("picture",goods.getPicture());
+                /**
+                 * 此处获取团购商品对应的图片
+                 */
+                if(goods.getPicture() != null) {
+                    itemInfo.put("picture", goods.getPicture());
+                } else {
+                    GoodsPic goodsPic = goodsPicRepository.findByGoodsId(goods.getGoodsId());
+                    if(goodsPic != null) {
+                        itemInfo.put("picture", goodsPic.getPicture());
+                    }
+                }
                 itemInfoList.add(itemInfo);
                 BigDecimal unitPrice = goods.getPrice();
                 unitPrice = unitPrice.multiply(BigDecimal.valueOf(item.getGoodsNumber()));
@@ -143,9 +282,23 @@ public class OrderDaoImpl implements OrderDao {
             newObject.put("goodsInfo",goods.getGoodsInfo());
             newObject.put("price",goods.getPrice());
             newObject.put("number",item.getGoodsNumber());
-            newObject.put("picture",goods.getPicture());
+//            newObject.put("picture",goods.getPicture());
+            /**
+             * 此处获取团购商品对应的图片
+             */
+            if(goods.getPicture() != null) {
+                newObject.put("picture", goods.getPicture());
+            } else {
+                GoodsPic goodsPic = goodsPicRepository.findByGoodsId(goods.getGoodsId());
+                if(goodsPic != null) {
+                    newObject.put("picture", goodsPic.getPicture());
+                }
+            }
+            newObject.put("goodsId", goods.getGoodsId());
             dataList.add(newObject);
-            totalPrice = totalPrice.add(goods.getPrice());
+            int num = item.getGoodsNumber();
+            for(int j = 0; j < num; ++j)
+                totalPrice = totalPrice.add(goods.getPrice());
         }
         JSONObject result = new JSONObject();
         result.put("totalPrice", totalPrice);
@@ -199,6 +352,11 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public void addToWallet(BigDecimal newWallet, Integer userId) {
+        usersRepository.addToWallet(newWallet, userId);
+    }
+
+    @Override
     public void changeInventory(Integer inventory, Integer goodsId){
         goodsRepository.changeInventory(inventory,goodsId);
     }
@@ -208,14 +366,21 @@ public class OrderDaoImpl implements OrderDao {
         ordersRepository.addToOrder(time,addressId,orderId);
     }
 
+    // TODO: 和groupDao中的函数有重复
     @Override
     public GroupBuying findByGroupId(int id){
-        return groupRepository.findByGroupId(id);
+        Optional<GroupBuying> groupBuying = groupDao.getGroupById(id);
+        if(groupBuying == null) {
+            return null;
+        } else {
+            return groupBuying.get();
+        }
     }
 
+    // TODO: 和groupDao中的函数有重复
     @Override
     public Goods findByGoodsId(Integer goodsId){
-        return goodsRepository.findByGoodsId(goodsId);
+        return groupDao.getGoodsById(goodsId);
     }
 
     @Override
@@ -236,5 +401,20 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public void changeGoodsNum(Integer goods_number, Integer goods_id, Integer order_id){
         orderItemsRepository.changeGoodsNum(goods_number,goods_id,order_id);
+    }
+
+    @Override
+    public List<Orders> getGroupAllCarts(Integer groupId){
+        return ordersRepository.getGroupAllCarts(groupId);
+    }
+
+    @Override
+    public void refundOneBack(Integer orderId, Integer userId){
+        ordersRepository.refundOneBack(orderId, userId);
+    }
+
+    @Override
+    public Set<Orders> isOrdered(GroupBuying groupBuying, User user) {
+        return ordersRepository.findOrdersByGroupAndUser(groupBuying, user);
     }
 }

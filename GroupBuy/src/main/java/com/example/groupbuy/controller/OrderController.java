@@ -24,6 +24,12 @@ public class OrderController {
         return orderService.getOrderByUserId(userId);
     }
 
+    @GetMapping("/getOrderInfo")
+    @ApiOperation("通过团长用户id获取其所有售出的订单信息")
+    public Message<List<JSONObject>> getOrderInfo(@RequestParam int userId){
+        return orderService.getOrderInfo(userId);
+    }
+
     @GetMapping("/getOrderByGroupId")
     @ApiOperation("团长通过团购Id查看团购订单查看团购订单")
     public Message<List<JSONObject>> getOrderByGroupId(@RequestParam int groupId){
