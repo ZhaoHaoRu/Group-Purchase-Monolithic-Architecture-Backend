@@ -105,11 +105,13 @@ public class GroupDaoImpl implements GroupDao {
     @Override
     public GroupPic saveGroupPic(Integer groupId, String picture) {
         GroupPic groupPic;
+        // TODO: 这里假设groupPic不会重新设置，所以只要数据库中查询到了相应的group的Pic就不会重新设置
         if((groupPic = groupPicRepository.findByGroupId(groupId)) != null) {
-            System.out.println(groupPic.getGroupPicId());
-            System.out.println(groupPic.getGroupId());
-            groupPic.setPicture(picture);
-            return groupPicRepository.save(groupPic);
+//            System.out.println(groupPic.getGroupPicId());
+//            System.out.println(groupPic.getGroupId());
+//            groupPic.setPicture(picture);
+//            return groupPicRepository.save(groupPic);
+            return groupPic;
         } else {
             GroupPic groupPic1 = new GroupPic();
             System.out.println("new group picture");
@@ -131,7 +133,6 @@ public class GroupDaoImpl implements GroupDao {
         /**
          * 这里首先要对于团购图片进行存储，注意此处并不会对于团购商品的图片进行操作
          */
-        // TODO: 这里对于已经存入MongoDB的数据项的查询有些问题，主键为null,暂时采用这种方式解决，使得groupPic不会重复插入
         if(newGroup != null && newGroup.getPicture() != null && !newGroup.getPicture().equals("already set")) {
             saveGroupPic(newGroup.getGroupId(), groupBuying.getPicture());
             newGroup.setPicture("already set");

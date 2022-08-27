@@ -77,5 +77,11 @@ public class GroupController {
         return groupService.changeGroup(groupBuying);
     }
 
+    @GetMapping("/judgeCollected")
+    @ApiOperation("判断是否是已收藏团购")
+    public Message<Boolean> judgeCollected(@RequestParam("userId") Integer userId, @RequestParam("groupId") Integer groupId) {
+        return groupService.judgeCollected(userId, groupId);
+    }
+
 
 }

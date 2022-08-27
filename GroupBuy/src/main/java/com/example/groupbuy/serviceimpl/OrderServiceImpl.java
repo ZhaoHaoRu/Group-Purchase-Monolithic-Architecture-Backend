@@ -35,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Message<List<JSONObject>> getOrderInfo(int userId){
+        System.out.println("OrderService  getOrderInfo");
         return MessageUtil.createMessage(MessageUtil.LOGIN_SUCCESS_CODE, MessageUtil.SUCCESS, orderDao.getOrderInfo(userId));
     }
 

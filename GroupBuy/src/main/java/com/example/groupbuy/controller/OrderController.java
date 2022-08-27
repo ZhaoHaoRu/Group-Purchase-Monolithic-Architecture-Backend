@@ -27,6 +27,8 @@ public class OrderController {
     @GetMapping("/getOrderInfo")
     @ApiOperation("通过团长用户id获取其所有售出的订单信息")
     public Message<List<JSONObject>> getOrderInfo(@RequestParam int userId){
+        System.out.println("getOrderInfo");
+        System.out.println(userId);
         return orderService.getOrderInfo(userId);
     }
 

@@ -30,6 +30,9 @@ public interface OrdersRepository extends JpaRepository<Orders,Integer>, JpaSpec
     @Query(value = "select * from orders where group_id = :groupId AND state = 1",nativeQuery = true)
     List<Orders> findOrderByGroupId(@Param("groupId") Integer groupId);
 
+    @Query(value = "select * from orders where group_id = :groupId AND state != 0",nativeQuery = true)
+    List<Orders> findValidByGroupId(@Param("groupId") Integer groupId);
+
     @Query(value = "SELECT order_id FROM orders WHERE user_id = :userId AND group_id = :groupId AND state = 0",nativeQuery = true)
     Integer getOrderId(@Param("userId") Integer userId, @Param("groupId") Integer groupId);
 

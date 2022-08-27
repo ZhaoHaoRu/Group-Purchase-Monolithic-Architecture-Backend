@@ -104,7 +104,21 @@ public class OrderDaoImpl implements OrderDao {
     public List<JSONObject> getOrderInfo(int userId){
 //        String strId = UserId.getString("userId");
 //        Integer userId = Integer.parseInt(strId);
-        List<Orders> orderList = ordersRepository.findOrderByTuanzhangId(userId);
+        System.out.println("userId:");
+        System.out.println(userId);
+        User user = usersRepository.findByUserId(userId);
+        if(user == null)
+            return null;
+        Set<GroupBuying> groups = user.getCreateGroups();
+        List<Orders> orderList = new ArrayList<>();
+        for(GroupBuying group : groups) {
+            List<Orders> orders = ordersRepository.findValidByGroupId(group.getGroupId());
+            orderList.addAll(orders);
+        }
+        // TODO: 这个方法貌似不大可行
+//        List<Orders> orderList = ordersRepository.findOrderByTuanzhangId(userId);
+        System.out.println("orderList number:");
+        System.out.println(orderList.size());
         List<JSONObject> dataList1 = new ArrayList<>();
         List<JSONObject> dataList2 = new ArrayList<>();
         int m = 0,n=0;
@@ -151,6 +165,8 @@ public class OrderDaoImpl implements OrderDao {
                     BigDecimal unitPrice = goods.getPrice();
                     unitPrice = unitPrice.multiply(BigDecimal.valueOf(item.getGoodsNumber()));
                     totalPrice = totalPrice.add(unitPrice);
+                    System.out.println("totalPrice:");
+                    System.out.println(totalPrice);
                 }
                 //newObject.put("orderItems",itemInfoList);
                 newObject1.put("orderPrice",totalPrice);

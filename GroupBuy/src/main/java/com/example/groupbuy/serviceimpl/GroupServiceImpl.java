@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import com.example.groupbuy.service.*;
 
 import javax.annotation.Resource;
+import javax.swing.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.*;
@@ -344,6 +345,20 @@ public class GroupServiceImpl implements GroupService {
             }
         }
         return newSet;
+    }
+
+    @Override
+    public Message<Boolean> judgeCollected(Integer userId, Integer groupId) {
+        User user = userDao.findById(userId);
+        if(user == null) {
+            return MessageUtil.createMessage(MessageUtil.FAIL_CODE, MessageUtil.FAIL, false);
+        }
+        Set<GroupBuying> groups = user.getGroups();
+        for(GroupBuying group : groups) {
+            if(group.getGroupId() == groupId)
+                return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, true);
+        }
+        return MessageUtil.createMessage(MessageUtil.FAIL_CODE, MessageUtil.FAIL, false);
     }
 
 

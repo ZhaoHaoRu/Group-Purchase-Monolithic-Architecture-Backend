@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
         List<String> categories = Arrays.asList("水果鲜花", "肉禽蛋", "水产海鲜", "乳品烘培", "酒水饮料");
         for(String category : categories) {
             UserHistory userHistory = new UserHistory();
+            userHistory.setLiking(0);
             userHistory.setUser(afterSave);
             userHistory.setCategory(category);
             userDao.saveUserHistory(userHistory);
@@ -182,26 +183,49 @@ public class UserServiceImpl implements UserService {
         Iterator<GroupBuying> iterator = groups.iterator();
         Set<GroupBuying> collectGroups = user.getGroups();
         Set<GroupBuying> createGroups = user.getCreateGroups();
-        while(iterator.hasNext()) {
-            GroupBuying group = iterator.next();
-            if(collectGroups.contains(group)) {
-                iterator.remove();
-            }
-            else if(createGroups.contains(group)) {
-                iterator.remove();
-            }
-            // 判断团购是否已经过期
+        Set<GroupBuying> groupFiltered = new HashSet<>();
+        for(GroupBuying group : groups) {
             long durationTime = Long.valueOf(group.getDuration() * 60 * 60 * 1000L);
             Timestamp timestamp = group.getStartTime();
             long startTime = timestamp.getTime();
             long nowTime = new Date().getTime();
             if(startTime + durationTime < nowTime) {
+                // TODO: 注意此处会对于团购的过期情况进行修改
                 group.setState(3);
                 groupDao.save(group);
-                iterator.remove();
+                continue;
             }
+            if(collectGroups.contains(group)) {
+                continue;
+            }
+            else if(createGroups.contains(group)) {
+                continue;
+            }
+            groupFiltered.add(group);
         }
-        return groups;
+        return groupFiltered;
+
+//        while(iterator.hasNext()) {
+//            GroupBuying group = iterator.next();
+//            if(collectGroups.contains(group)) {
+//                iterator.remove();
+//            }
+//            else if(createGroups.contains(group)) {
+//                iterator.remove();
+//            }
+//            // 判断团购是否已经过期
+//            long durationTime = Long.valueOf(group.getDuration() * 60 * 60 * 1000L);
+//            Timestamp timestamp = group.getStartTime();
+//            long startTime = timestamp.getTime();
+//            long nowTime = new Date().getTime();
+//            if(startTime + durationTime < nowTime) {
+//                // TODO: 注意此处会对于团购的过期情况进行修改
+//                group.setState(3);
+//                groupDao.save(group);
+//                iterator.remove();
+//            }
+//        }
+//        return groups;
     }
 
     /**
@@ -211,7 +235,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Message<Set<GroupBuying>> RecommendGroup(int userId) {
-        Integer baseCount = 6;
+        Integer baseCount = 4;
         // 获取用户的喜好历史
         User user = userDao.findById(userId);
         Map<String, Integer> userHistoryMap = new HashMap<String, Integer>();
