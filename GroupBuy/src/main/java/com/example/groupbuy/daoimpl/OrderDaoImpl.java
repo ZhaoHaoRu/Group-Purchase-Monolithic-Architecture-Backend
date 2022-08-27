@@ -108,53 +108,56 @@ public class OrderDaoImpl implements OrderDao {
         List<JSONObject> dataList1 = new ArrayList<>();
         List<JSONObject> dataList2 = new ArrayList<>();
         int m = 0,n=0;
+        BigDecimal totalRefund = BigDecimal.valueOf(0);
+        BigDecimal totalSales = BigDecimal.valueOf(0);
         for (int i=0; i<orderList.size(); ++i){
             Orders order = orderList.get(i);
             JSONObject newObject1 = new JSONObject();
             JSONObject newObject2 = new JSONObject();
             Address address = order.getAddress();
             GroupBuying group = order.getGroup();
-            if(order.getState()==1){
-            newObject1.put("id",m);
-            newObject1.put("groupTitle",group.getGroupTitle());
-            m++;
-            //newObject.put("groupId",group.getGroupId());
-            //newObject.put("headerName",group.getUser().getUserName());
-            //newObject.put("headerId",group.getUser().getUserId());
-            //newObject.put("delivery",group.getDelivery());
-            //该订单的所有订单项
-            List<OrderItems> itemList = orderItemsRepository.findItemsByOrderId(order.getOrderId());
-            List<JSONObject> itemInfoList = new ArrayList<>();
-            BigDecimal totalPrice = BigDecimal.valueOf(0);
-            for (int j=0; j<itemList.size(); ++j){
-                OrderItems item = itemList.get(j);
-                JSONObject itemInfo = new JSONObject();
-                Goods goods = item.getGood();
-                //itemInfo.put("goodsName",goods.getGoodsName());
-                //itemInfo.put("goodsInfo",goods.getGoodsInfo());
-                //itemInfo.put("price",goods.getPrice());
-                //itemInfo.put("number",item.getGoodsNumber());
-                /**
-                 * 此处获取团购商品对应的图片
-                 */
-                if(goods.getPicture() != null) {
-                    itemInfo.put("picture", goods.getPicture());
-                } else {
-                    GoodsPic goodsPic = goodsPicRepository.findByGoodsId(goods.getGoodsId());
-                    if(goodsPic != null) {
-                        itemInfo.put("picture", goodsPic.getPicture());
+            if(order.getState() == 1){
+                newObject1.put("id", m);
+                newObject1.put("groupTitle",group.getGroupTitle());
+                m++;
+                //newObject.put("groupId",group.getGroupId());
+                //newObject.put("headerName",group.getUser().getUserName());
+                //newObject.put("headerId",group.getUser().getUserId());
+                //newObject.put("delivery",group.getDelivery());
+                //该订单的所有订单项
+                List<OrderItems> itemList = orderItemsRepository.findItemsByOrderId(order.getOrderId());
+                List<JSONObject> itemInfoList = new ArrayList<>();
+                BigDecimal totalPrice = BigDecimal.valueOf(0);
+                for (int j=0; j<itemList.size(); ++j){
+                    OrderItems item = itemList.get(j);
+                    JSONObject itemInfo = new JSONObject();
+                    Goods goods = item.getGood();
+                    //itemInfo.put("goodsName",goods.getGoodsName());
+                    //itemInfo.put("goodsInfo",goods.getGoodsInfo());
+                    //itemInfo.put("price",goods.getPrice());
+                    //itemInfo.put("number",item.getGoodsNumber());
+                    /**
+                     * 此处获取团购商品对应的图片
+                     */
+                    if(goods.getPicture() != null) {
+                        itemInfo.put("picture", goods.getPicture());
+                    } else {
+                        GoodsPic goodsPic = goodsPicRepository.findByGoodsId(goods.getGoodsId());
+                        if(goodsPic != null) {
+                            itemInfo.put("picture", goodsPic.getPicture());
+                        }
                     }
+                    itemInfoList.add(itemInfo);
+                    BigDecimal unitPrice = goods.getPrice();
+                    unitPrice = unitPrice.multiply(BigDecimal.valueOf(item.getGoodsNumber()));
+                    totalPrice = totalPrice.add(unitPrice);
                 }
-                itemInfoList.add(itemInfo);
-                BigDecimal unitPrice = goods.getPrice();
-                unitPrice = unitPrice.multiply(BigDecimal.valueOf(item.getGoodsNumber()));
-                totalPrice = totalPrice.add(unitPrice);
+                //newObject.put("orderItems",itemInfoList);
+                newObject1.put("orderPrice",totalPrice);
+                totalSales = totalSales.add(totalPrice);
+                dataList1.add(newObject1);
             }
-            //newObject.put("orderItems",itemInfoList);
-            newObject1.put("orderPrice",totalPrice);
-            dataList1.add(newObject1);
-            }
-            else{
+            else if(order.getState() == 2){
                 newObject2.put("id",n);
                 newObject2.put("groupTitle",group.getGroupTitle());
                 n++;
@@ -191,6 +194,7 @@ public class OrderDaoImpl implements OrderDao {
                     totalPrice = totalPrice.add(unitPrice);
                 }
                 //newObject.put("orderItems",itemInfoList);
+                totalRefund = totalRefund.add(totalPrice);
                 newObject2.put("orderPrice",totalPrice);
                 dataList2.add(newObject2);
             }
@@ -212,28 +216,29 @@ public class OrderDaoImpl implements OrderDao {
         newObject3.put("id",2);
         newObject3.put("title","统计分析");
         List<JSONObject> dataList3 = new ArrayList<>();
-        int x=0,y=0;
+        // TODO: 这里用int感觉有点问题，price应该是bigDecimal
+        int y = 0, x = 0;
         JSONObject newObject4 = new JSONObject();
         newObject4.put("id",0);
-        newObject4.put("groupTitle","订单数");
-        newObject4.put("orderPrice",(m+n));
+        newObject4.put("orderNum","订单数");
+        newObject4.put("value",(m+n));
         dataList3.add(newObject4);
 
 
         JSONObject newObject5 = new JSONObject();
         newObject5.put("id",1);
-        newObject5.put("groupTitle","下单人数");
-        newObject5.put("orderPrice",m);
+        newObject5.put("title","下单人数");
+        newObject5.put("value",m);
         dataList3.add(newObject5);
 
 
         for (JSONObject json : dataList1){
-            x+=json.getInteger("orderPrice");
+            x += json.getInteger("orderPrice");
         }
         JSONObject newObject6 = new JSONObject();
         newObject6.put("id",2);
-        newObject6.put("groupTitle","总销售金额");
-        newObject6.put("orderPrice",x);
+        newObject6.put("title","总销售金额");
+        newObject6.put("value", totalSales);
         dataList3.add(newObject6);
 
 
@@ -242,8 +247,8 @@ public class OrderDaoImpl implements OrderDao {
         }
         JSONObject newObject7 = new JSONObject();
         newObject7.put("id",3);
-        newObject7.put("groupTitle","总退款金额");
-        newObject7.put("orderPrice",y);
+        newObject7.put("title","总退款金额");
+        newObject7.put("value",totalRefund);
         dataList3.add(newObject7);
 
 
