@@ -50,7 +50,8 @@ public class SecKillController implements InitializingBean  {
 
 
 
-    //内存标记，减少redis访问
+    // 内存标记，减少redis访问
+    // 对于在运行期间加入的商品，没有内存标记
     private HashMap<String, Boolean> localOverMap =  new HashMap<String, Boolean>();
 
 
@@ -74,7 +75,33 @@ public class SecKillController implements InitializingBean  {
         }
     }
 
+    /**
+     * 在新建团购和修改团购（修改了团购价格）时将商品加入redis
+     * @param goods
+     */
+//    public void addNewProduct(Goods goods) {
+//        String goodsStr = goods.getGoodsId().toString();
+//        redisUtil.getRedisTemplate().opsForValue().set(goodsStr, String.valueOf(goods.getInventory()));
+//        redisUtil.getRedisTemplate().opsForValue().set("price_" + goodsStr, goods.getPrice().toString());
+//        // 添加内存标记
+//        localOverMap.put(goods.getGoodsId().toString(), false);
+//    }
 
+    /**
+     * 对于更新了库存了商品进行修改
+     * @param goods
+     */
+//    public void updateProduct(Goods goods) {
+//        String goodsStr = goods.getGoodsId().toString();
+//        redisUtil.del(goodsStr);
+//        redisUtil.getRedisTemplate().opsForValue().set(goodsStr, String.valueOf(goods.getInventory()));
+//        // 对于内存中的库存内容进行修改
+//        if(goods.getInventory() <= 0) {
+//            localOverMap.put(goods.getGoodsId().toString(), true);
+//        } else {
+//            localOverMap.put(goods.getGoodsId().toString(), false);
+//        }
+//    }
 
     /**
      * 秒杀请求,采用redis+rabbitmq的方式
@@ -111,6 +138,10 @@ public class SecKillController implements InitializingBean  {
             Map<String, Integer> obj =  (Map<String, Integer>) goodsData.get(i);
             long goodsNumber = obj.get("goodsNumber");
             String goodsId = obj.get("goodsId").toString();
+            // 对于没有加入localOverMap中的商品，应该是有货的，现在将其加入
+            if(!localOverMap.containsKey(goodsId)) {
+                localOverMap.put(goodsId, false);
+            }
             if(localOverMap.get(goodsId)) {
                 return MessageUtil.createMessage(MessageUtil.FAIL_CODE,MessageUtil.FAIL,"商品库存不足");
             }

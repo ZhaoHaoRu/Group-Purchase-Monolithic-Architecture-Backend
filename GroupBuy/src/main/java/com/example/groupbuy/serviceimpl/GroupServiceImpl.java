@@ -15,7 +15,9 @@ import com.example.groupbuy.service.GroupService;
 import com.example.groupbuy.utils.JpaUtils;
 import com.example.groupbuy.utils.messageUtils.Message;
 import com.example.groupbuy.utils.messageUtils.MessageUtil;
+import com.example.groupbuy.utils.redis.RedisUtil;
 import com.google.common.collect.Sets;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.groupbuy.service.*;
 
@@ -36,6 +38,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Resource
     OrderDao orderDao;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public Message<GroupBuying> getGroupById(int id) {
@@ -80,10 +85,25 @@ public class GroupServiceImpl implements GroupService {
                 goods.setPrice(bd);
                 goods.setInventory(Integer.parseInt(obj.get("inventory")));
                 goods.setGroup(groupAfterCreate);
-                groupDao.saveGoods(goods);
+                Goods goods1 = groupDao.saveGoods(goods);
+                /**
+                 * 将秒杀团购的商品加入缓存
+                 */
+                addNewProduct(goods);
             }
         }
         GroupBuying newGroup = groupDao.save(groupAfterCreate);
+
+//        /**
+//         * 将秒杀团购的商品加入缓存
+//         */
+//        if(newGroup.getState() == 2) {
+//            Set<Goods> goodsSet = newGroup.getGoods();
+//            for (Goods goods : goodsSet) {
+//                addNewProduct(goods);
+//            }
+//        }
+
         if (newGroup != null) {
             return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS, newGroup);
         } else {
@@ -235,6 +255,14 @@ public class GroupServiceImpl implements GroupService {
         //更新团购信息
         groupDao.updateGroup(groupId, groupTitle, groupInfo, category, startTime, duration);
 
+        /**
+         * TODO：对于缓存中的团购信息进行修改，如果bug太多就不加这个了
+         */
+        GroupBuying fullGroup = groupDao.getGroupById(groupId).get();
+        if(fullGroup == null)
+            return MessageUtil.createMessage(MessageUtil.FAIL_CODE, MessageUtil.FAIL);
+        boolean isSecKill = (fullGroup.getState() == 2);
+
         //更新商品
         for (int i = 0; i < goodsList.size(); ++i) {
             ChangeGoods newGoods = goodsList.get(i);
@@ -242,6 +270,12 @@ public class GroupServiceImpl implements GroupService {
             //如果商品价格不改变，那么可以在原商品上面直接更新
             if (newGoods.getPrice().compareTo(oldGoods.getPrice())==0) {
                 groupDao.updateGoods(newGoods.getGoodsId(), newGoods.getGoodsInfo(), newGoods.getPrice(), newGoods.getInventory());
+                /**
+                 *  对于缓存中的秒杀商品进行更新
+                 */
+                if(isSecKill) {
+                    updateProduct(newGoods);
+                }
             } else {
                 //原商品的库存变为-1
                 groupDao.updateGoods(oldGoods.getGoodsId(), oldGoods.getGoodsInfo(), oldGoods.getPrice(), -1);
@@ -256,8 +290,12 @@ public class GroupServiceImpl implements GroupService {
                 goods.setGroup(oldGoods.getGroup());
                 goods.setGoodsName(oldGoods.getGoodsName());
                 goods.setPicture(oldGoods.getPicture());
-                groupDao.saveGoods(goods);
+                Goods goodsAfterSave = groupDao.saveGoods(goods);
 
+                /**
+                 * 对于新的秒杀商品进行更新
+                 */
+                addNewProduct(goodsAfterSave);
                 //更新所有的购物车
                 List<Orders> CartList = orderDao.getGroupAllCarts(groupId);
                 for (int j = 0; j < CartList.size(); ++j) {
@@ -269,69 +307,6 @@ public class GroupServiceImpl implements GroupService {
             }
         }
         return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE, MessageUtil.SUCCESS);
-//        int groupId =  groupBuying.getInteger("groupId");
-//        GroupBuying groupById = groupDao.getGroupById(groupId).orElseThrow(() -> new IllegalArgumentException("错误"));
-//
-//        GroupBuying newGroup = groupById;
-//
-//        if(groupBuying.containsKey("groupTitle"))
-//            newGroup.setGroupTitle(groupBuying.getString("groupTitle"));
-//        if(groupBuying.containsKey("groupInfo"))
-//            newGroup.setGroupInfo(groupBuying.getString("groupInfo"));
-//        if(groupBuying.containsKey("groupInfo"))
-//            newGroup.setDelivery(groupBuying.getString("groupInfo"));
-//        if(groupBuying.containsKey("groupInfo"))
-//            newGroup.setDuration(groupBuying.getInteger("duration"));
-//        if(groupBuying.containsKey("picture"))
-//            newGroup.setPicture(groupBuying.getString("picture"));
-//        if(groupBuying.containsKey("category"))
-//            newGroup.setCategory(groupBuying.getString("category"));
-//
-//
-//        if(groupBuying.containsKey("goods")){
-//            JSONArray goodsArray = groupBuying.getJSONArray("goods");
-//        //System.out.println(groupBuying);
-//        //System.out.println(goodsArray.size());
-//
-//        if(goodsArray.size() > 0) {
-//
-//            newGroup.setGoods(null);
-//
-//            for(int i = 0; i < goodsArray.size(); ++i) {
-//
-//                //Object obj=goodsArray.parseObject(i);
-//
-//                JSONObject obj =goodsArray.getJSONObject(i);
-//
-//                Goods goods = new Goods();
-//
-//                goods.setGoodsInfo(obj.getString("goodsInfo"));
-//                goods.setGoodsName(obj.getString("goodsName"));
-//                goods.setPicture(obj.getString("picture"));
-//
-//
-//
-//                BigDecimal bd= new BigDecimal((obj.getString("price")));
-//
-//
-//                goods.setPrice(bd);
-//                System.out.println(groupBuying);
-//
-//                goods.setInventory(Integer.parseInt(obj.get("inventory").toString()));
-//
-//
-//
-//                goods.setGroup(newGroup);
-//
-//
-//                groupDao.saveGoods(goods);
-//            }
-//        }
-//        }
-//
-//        JpaUtils.createUpdateEntity(groupById, newGroup);
-//        groupDao.save(newGroup);
-//        return MessageUtil.createMessage(MessageUtil.SUCCESS_CODE,MessageUtil.SUCCESS);
     }
 
     @Override
@@ -361,5 +336,23 @@ public class GroupServiceImpl implements GroupService {
         return MessageUtil.createMessage(MessageUtil.FAIL_CODE, MessageUtil.FAIL, false);
     }
 
+    @Override
+    public void updateProduct(ChangeGoods goods) {
+        String goodsStr = goods.getGoodsId().toString();
+        redisUtil.del(goodsStr);
+        redisUtil.getRedisTemplate().opsForValue().set(goodsStr, String.valueOf(goods.getInventory()));
+//        if(goods.getInventory() <= 0) {
+//            localOverMap.put(goods.getGoodsId().toString(), true);
+//        } else {
+//            localOverMap.put(goods.getGoodsId().toString(), false);
+//        }
+    }
+
+    @Override
+    public void addNewProduct(Goods goods) {
+        String goodsStr = goods.getGoodsId().toString();
+        redisUtil.getRedisTemplate().opsForValue().set(goodsStr, String.valueOf(goods.getInventory()));
+        redisUtil.getRedisTemplate().opsForValue().set("price_" + goodsStr, goods.getPrice().toString());
+    }
 
 }

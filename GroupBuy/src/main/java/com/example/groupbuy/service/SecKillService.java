@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.groupbuy.entity.Goods;
 import com.example.groupbuy.entity.GroupBuying;
 import com.example.groupbuy.entity.User;
+import com.example.groupbuy.entity.VO.ChangeGoods;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -29,4 +30,5 @@ public interface SecKillService {
 
     // TODO　获取秒杀结果
     boolean SecKillResult(Integer userId, Integer groupId);
+
 }

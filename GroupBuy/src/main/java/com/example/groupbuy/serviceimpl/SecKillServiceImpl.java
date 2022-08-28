@@ -5,6 +5,7 @@ import com.example.groupbuy.dao.GroupDao;
 import com.example.groupbuy.dao.OrderDao;
 import com.example.groupbuy.dao.UserDao;
 import com.example.groupbuy.entity.*;
+import com.example.groupbuy.entity.VO.ChangeGoods;
 import com.example.groupbuy.service.GroupService;
 import com.example.groupbuy.service.RedisService;
 import com.example.groupbuy.service.SecKillService;
@@ -29,7 +30,7 @@ public class SecKillServiceImpl implements SecKillService {
     @Resource
     OrderDao orderDao;
 
-    @Resource
+    @Autowired
     GroupService groupService;
 
     @Resource
@@ -100,6 +101,8 @@ public class SecKillServiceImpl implements SecKillService {
             return goods;
         }
     }
+
+
 
     @Override
 //    @Transactional

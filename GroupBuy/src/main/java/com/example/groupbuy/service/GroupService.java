@@ -2,6 +2,7 @@ package com.example.groupbuy.service;
 
 import com.example.groupbuy.entity.Goods;
 import com.example.groupbuy.entity.GroupBuying;
+import com.example.groupbuy.entity.VO.ChangeGoods;
 import com.example.groupbuy.entity.VO.ChangeGroup;
 import com.example.groupbuy.utils.messageUtils.Message;
 import com.alibaba.fastjson.JSONObject;
@@ -37,4 +38,10 @@ public interface GroupService {
     Set<Goods> FilterByInventory(Set<Goods> goodsList);
 
     Message<Boolean> judgeCollected(Integer userId, Integer groupId);
+
+    // TODO 对于更新了库存了商品进行修改
+    void updateProduct(ChangeGoods goods);
+
+    // TODO 在新建团购和修改团购（修改了团购价格）时将商品加入redis
+    void addNewProduct(Goods goods);
 }
