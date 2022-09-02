@@ -11,7 +11,7 @@
  Target Server Version : 80027
  File Encoding         : 65001
 
- Date: 27/08/2022 19:01:26
+ Date: 28/08/2022 16:58:16
 */
 
 SET NAMES utf8mb4;
@@ -52,13 +52,12 @@ INSERT INTO `address` VALUES (13, '东川路800号', '12345', 'alice', '上海�
 INSERT INTO `address` VALUES (14, '东川路800号', '12345', 'alice', '上海市闵行区', 2);
 INSERT INTO `address` VALUES (15, '东川路800号', '123456', 'Jack', '上海市闵行区', 2);
 INSERT INTO `address` VALUES (16, '东川路800号', '123556', 'Jack', '上海市闵行区', 2);
-INSERT INTO `address` VALUES (17, '', '', '我', '', 2);
-INSERT INTO `address` VALUES (18, '', '', '', '', 2);
-INSERT INTO `address` VALUES (19, '', '', '', '', 2);
-INSERT INTO `address` VALUES (20, '', '', '', '', 2);
 INSERT INTO `address` VALUES (21, '东川路800号', '1234567', 'ALICE', '上海市闵行区', 2);
 INSERT INTO `address` VALUES (22, 'dongchuan890', '123567', 'Alice', 'shanghai', 2);
 INSERT INTO `address` VALUES (23, 'Dd', 'Bb', 'Aa', 'Cc', 2);
+INSERT INTO `address` VALUES (24, '东川路800号', '123556', 'Jack', '上海市闵行区', 2);
+INSERT INTO `address` VALUES (25, '东川路800号', '123556', 'Jack', '上海市闵行区', 2);
+INSERT INTO `address` VALUES (28, '东川路800号', '1322288955', 'Judy', '上海市闵行区', 15);
 
 -- ----------------------------
 -- Table structure for goods
@@ -75,7 +74,7 @@ CREATE TABLE `goods`  (
   PRIMARY KEY (`goods_id`) USING BTREE,
   INDEX `FKe6mh7n6wde6pobge5dky5gi2b`(`group_id`) USING BTREE,
   CONSTRAINT `FKe6mh7n6wde6pobge5dky5gi2b` FOREIGN KEY (`group_id`) REFERENCES `groupbuying` (`group_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 63 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 64 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of goods
@@ -97,9 +96,11 @@ INSERT INTO `goods` VALUES (24, '新鲜牛奶', 'milk', 118, 'https://img.zcool.
 INSERT INTO `goods` VALUES (26, '好喝的奶茶', '布丁奶茶', 2000, 'https://img.zcool.cn/community/0141c65dcd6250a8012129e2db4fe9.jpg@1280w_1l_2o_100sh.jpghttps://img.zcool.cn/community', 7.00, 19);
 INSERT INTO `goods` VALUES (28, '新鲜的包子', '包子', 195, 'https://st-cn.meishij.net/r/181/98/13899681/s13899681_159730313168615.jpg', 2.20, 1);
 INSERT INTO `goods` VALUES (29, '新鲜的油条', '油条', 197, 'https://st-cn.meishij.net/r/181/98/13899681/s13899681_159730313168615.jpg', 2.20, 1);
-INSERT INTO `goods` VALUES (60, '新出炉的面包', '面包', 3998, NULL, 4.00, 36);
-INSERT INTO `goods` VALUES (61, '丝滑慕斯', '慕斯蛋糕', 1000, NULL, 12.00, 37);
-INSERT INTO `goods` VALUES (62, '新鲜生虾', '虾', 400, NULL, 12.00, 38);
+INSERT INTO `goods` VALUES (60, '新出炉的面包', '面包', 3999, NULL, 4.00, 36);
+INSERT INTO `goods` VALUES (61, '丝滑慕斯', '慕斯蛋糕', 997, NULL, 12.00, 37);
+INSERT INTO `goods` VALUES (62, '新鲜生虾', '虾', 398, NULL, 12.00, 38);
+INSERT INTO `goods` VALUES (63, '柠檬水加冰', '鲜榨柠檬水', -1, NULL, 6.00, 39);
+INSERT INTO `goods` VALUES (64, '柠檬水加冰', '鲜榨柠檬水', 999, NULL, 12.00, 39);
 
 -- ----------------------------
 -- Table structure for groupbuying
@@ -120,20 +121,21 @@ CREATE TABLE `groupbuying`  (
   PRIMARY KEY (`group_id`) USING BTREE,
   INDEX `FK3cxh8xkv07nf46hjckvl63srt`(`user_id`) USING BTREE,
   CONSTRAINT `FK3cxh8xkv07nf46hjckvl63srt` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of groupbuying
 -- ----------------------------
-INSERT INTO `groupbuying` VALUES (1, '肉禽蛋', '同城配送', 72, '新鲜的美食', '早餐特供', 'https://img.zcool.cn/community/0143da5c0a399fa8012092522e5328.jpg@3000w_1l_2o_100sh.jpg', '2022-08-22 11:06:21.000000', 3, 2, 1);
-INSERT INTO `groupbuying` VALUES (3, '肉禽蛋', '同城配送', 48, '新鲜的美食', 'breakfast', 'https://img.zcool.cn/community/016eb45c0a3985a801209252f3d239.jpg@1280w_1l_2o_100sh.jpg', '2022-08-22 17:06:21.000000', 1, 2, 3);
-INSERT INTO `groupbuying` VALUES (4, '水果鲜花', '同城配送', 72, '新鲜水果一小时达', '时鲜水果', 'https://img.zcool.cn/community/01a83f5c31a389a8012029acb9541e.jpg@1280w_1l_2o_100sh.jpg', '2022-08-26 11:06:21.000000', 1, 3, 2);
-INSERT INTO `groupbuying` VALUES (5, '肉禽蛋', '快递', 30, '新鲜绿色农家蛋', '农家鸡蛋', 'https://img.zcool.cn/community/01076c5c08b579a801209252d89133.jpg@1280w_1l_2o_100sh.jpg', '2022-08-22 20:00:00.000000', 3, 1, 4);
-INSERT INTO `groupbuying` VALUES (6, '乳品烘培', '快递', 48, '各品牌雪糕', '雪糕批发', 'https://img.zcool.cn/community/01fafc5ccba072a8012141685ee396.jpg@1280w_1l_2o_100sh.jpg', '2022-08-23 12:00:00.000000', 0, 1, 1);
-INSERT INTO `groupbuying` VALUES (19, '酒水饮料', '快递', 48, '好喝的奶茶', '奶茶团购', 'https://img.zcool.cn/community/0141c65dcd6250a8012129e2db4fe9.jpg@1280w_1l_2o_100sh.jpghttps://img.zcool.cn/community', '2022-08-22 20:00:00.000000', 1, 2, 5);
-INSERT INTO `groupbuying` VALUES (36, '乳品烘培', '快递', 48, '新鲜的面包团购', '面包团购', NULL, '2022-08-22 15:23:05.000000', 3, 2, 6);
-INSERT INTO `groupbuying` VALUES (37, '乳品烘培', '快递', 48, '新鲜蛋糕', '蛋糕团购', NULL, '2022-08-22 05:30:56.000000', 3, 4, 2);
-INSERT INTO `groupbuying` VALUES (38, '水产海鲜', '快递', 72, '新鲜海鲜', '海鲜团购', NULL, '2022-08-22 08:59:30.000000', 3, 2, 0);
+INSERT INTO `groupbuying` VALUES (1, '肉禽蛋', '同城配送', 72, '新鲜的美食', '早餐特供', 'https://img.zcool.cn/community/0143da5c0a399fa8012092522e5328.jpg@3000w_1l_2o_100sh.jpg', '2022-08-28 11:06:21.000000', 1, 2, 1);
+INSERT INTO `groupbuying` VALUES (3, '肉禽蛋', '同城配送', 48, '新鲜的美食', 'breakfast', 'https://img.zcool.cn/community/016eb45c0a3985a801209252f3d239.jpg@1280w_1l_2o_100sh.jpg', '2022-08-28 17:06:21.000000', 0, 2, 3);
+INSERT INTO `groupbuying` VALUES (4, '水果鲜花', '同城配送', 72, '新鲜水果一小时达', '时鲜水果', 'https://img.zcool.cn/community/01a83f5c31a389a8012029acb9541e.jpg@1280w_1l_2o_100sh.jpg', '2022-08-28 11:06:21.000000', 1, 3, 2);
+INSERT INTO `groupbuying` VALUES (5, '肉禽蛋', '快递', 30, '新鲜绿色农家蛋', '农家鸡蛋', 'https://img.zcool.cn/community/01076c5c08b579a801209252d89133.jpg@1280w_1l_2o_100sh.jpg', '2022-08-28 20:00:00.000000', 1, 1, 4);
+INSERT INTO `groupbuying` VALUES (6, '乳品烘培', '快递', 48, '各品牌雪糕', '雪糕批发', 'https://img.zcool.cn/community/01fafc5ccba072a8012141685ee396.jpg@1280w_1l_2o_100sh.jpg', '2022-08-28 12:00:00.000000', 0, 1, 1);
+INSERT INTO `groupbuying` VALUES (19, '酒水饮料', '快递', 48, '好喝的奶茶', '奶茶团购', 'https://img.zcool.cn/community/0141c65dcd6250a8012129e2db4fe9.jpg@1280w_1l_2o_100sh.jpghttps://img.zcool.cn/community', '2022-08-27 20:00:00.000000', 1, 2, 5);
+INSERT INTO `groupbuying` VALUES (36, '乳品烘培', '快递', 48, '新鲜的面包团购', '面包团购', NULL, '2022-08-27 15:23:05.000000', 1, 2, 6);
+INSERT INTO `groupbuying` VALUES (37, '乳品烘培', '快递', 48, '新鲜蛋糕', '蛋糕团购', NULL, '2022-08-28 05:30:56.000000', 1, 4, 5);
+INSERT INTO `groupbuying` VALUES (38, '水产海鲜', '快递', 72, '新鲜海鲜', '海鲜团购', NULL, '2022-08-27 08:59:30.000000', 1, 2, 8);
+INSERT INTO `groupbuying` VALUES (39, '酒水饮料', '快递', 72, '冰鲜柠檬水', '柠檬水', NULL, '2022-08-28 08:17:38.000000', 2, 15, 3);
 
 -- ----------------------------
 -- Table structure for order_item
@@ -200,8 +202,10 @@ INSERT INTO `order_item` VALUES (80, 1, 5, 63);
 INSERT INTO `order_item` VALUES (81, 1, 60, 64);
 INSERT INTO `order_item` VALUES (82, 1, 6, 65);
 INSERT INTO `order_item` VALUES (83, 1, 6, 66);
-INSERT INTO `order_item` VALUES (84, 1, 61, 67);
+INSERT INTO `order_item` VALUES (84, 3, 61, 67);
 INSERT INTO `order_item` VALUES (85, 1, 60, 68);
+INSERT INTO `order_item` VALUES (86, 1, 64, 69);
+INSERT INTO `order_item` VALUES (87, 1, 62, 70);
 
 -- ----------------------------
 -- Table structure for orders
@@ -259,11 +263,13 @@ INSERT INTO `orders` VALUES (49, 2, '2022-07-13 12:16:41.000000', 6, 1, 2);
 INSERT INTO `orders` VALUES (60, 1, '2022-07-26 17:08:24.173000', 5, 1, 2);
 INSERT INTO `orders` VALUES (61, 1, '2022-07-26 17:15:42.574000', 5, 1, 2);
 INSERT INTO `orders` VALUES (63, 1, '2022-07-26 17:20:26.983000', 16, 4, 2);
-INSERT INTO `orders` VALUES (64, 1, '2022-08-20 10:12:53.000000', 7, 36, 2);
+INSERT INTO `orders` VALUES (64, 2, '2022-08-20 10:12:53.000000', 7, 36, 2);
 INSERT INTO `orders` VALUES (65, 0, NULL, NULL, 5, NULL);
 INSERT INTO `orders` VALUES (66, 0, NULL, NULL, 5, NULL);
-INSERT INTO `orders` VALUES (67, 0, NULL, NULL, 37, 2);
+INSERT INTO `orders` VALUES (67, 1, '2022-08-28 16:00:12.000000', 21, 37, 2);
 INSERT INTO `orders` VALUES (68, 1, '2022-08-23 10:57:02.000000', 9, 36, 2);
+INSERT INTO `orders` VALUES (69, 1, '2022-08-28 14:24:13.200000', 25, 39, 2);
+INSERT INTO `orders` VALUES (70, 2, '2022-08-28 16:38:16.000000', 28, 38, 15);
 
 -- ----------------------------
 -- Table structure for subscriptions
@@ -285,6 +291,7 @@ INSERT INTO `subscriptions` VALUES (2, 1);
 INSERT INTO `subscriptions` VALUES (2, 3);
 INSERT INTO `subscriptions` VALUES (2, 36);
 INSERT INTO `subscriptions` VALUES (2, 37);
+INSERT INTO `subscriptions` VALUES (2, 39);
 
 -- ----------------------------
 -- Table structure for user
@@ -297,17 +304,18 @@ CREATE TABLE `user`  (
   `user_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '用户姓名',
   `wallet` decimal(19, 2) NULL DEFAULT NULL COMMENT '钱包余额',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
 INSERT INTO `user` VALUES (1, '1665249633@qq.com', '123456', 'Luoshicai', 725.00);
-INSERT INTO `user` VALUES (2, 'xxx@xx.com', '123456', 'John', 652.40);
+INSERT INTO `user` VALUES (2, 'xxx@xx.com', '123456', 'John', 616.40);
 INSERT INTO `user` VALUES (3, 'yyy@yy.com', '123456', 'Mike', 451.00);
-INSERT INTO `user` VALUES (4, 'test1@163.com', '1234', 'test1', 1000.00);
+INSERT INTO `user` VALUES (4, 'test1@163.com', '1234', 'test1', 1036.00);
 INSERT INTO `user` VALUES (5, 'Aa@gmail.com', 'Aa', 'Aa', 1000.00);
 INSERT INTO `user` VALUES (6, 'Bb@gmail.com', 'Bb', 'Bb', 1000.00);
+INSERT INTO `user` VALUES (15, 'test2@sina.com', '1234', 'Alice', 1000.00);
 
 -- ----------------------------
 -- Table structure for user_history
@@ -321,7 +329,7 @@ CREATE TABLE `user_history`  (
   PRIMARY KEY (`history_id`) USING BTREE,
   INDEX `FKaa6ilb6iqih95bntoeyysb2pc`(`user_id`) USING BTREE,
   CONSTRAINT `FKaa6ilb6iqih95bntoeyysb2pc` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_history
@@ -334,8 +342,8 @@ INSERT INTO `user_history` VALUES (5, '酒水饮料', 3, 1);
 INSERT INTO `user_history` VALUES (6, '水果鲜花', 4, 2);
 INSERT INTO `user_history` VALUES (7, '肉禽蛋', 5, 2);
 INSERT INTO `user_history` VALUES (8, '水产海鲜', 6, 2);
-INSERT INTO `user_history` VALUES (9, '乳品烘培', 16, 2);
-INSERT INTO `user_history` VALUES (10, '酒水饮料', 0, 2);
+INSERT INTO `user_history` VALUES (9, '乳品烘培', 19, 2);
+INSERT INTO `user_history` VALUES (10, '酒水饮料', 3, 2);
 INSERT INTO `user_history` VALUES (12, '水果鲜花', 8, 3);
 INSERT INTO `user_history` VALUES (13, '肉禽蛋', 1, 3);
 INSERT INTO `user_history` VALUES (14, '水产海鲜', 2, 3);
@@ -356,5 +364,10 @@ INSERT INTO `user_history` VALUES (28, '肉禽蛋', 7, 6);
 INSERT INTO `user_history` VALUES (29, '水产海鲜', 11, 6);
 INSERT INTO `user_history` VALUES (30, '乳品烘培', 1, 6);
 INSERT INTO `user_history` VALUES (31, '酒水饮料', 2, 6);
+INSERT INTO `user_history` VALUES (37, '水果鲜花', 0, 15);
+INSERT INTO `user_history` VALUES (38, '肉禽蛋', 0, 15);
+INSERT INTO `user_history` VALUES (39, '水产海鲜', 8, 15);
+INSERT INTO `user_history` VALUES (40, '乳品烘培', 0, 15);
+INSERT INTO `user_history` VALUES (41, '酒水饮料', 0, 15);
 
 SET FOREIGN_KEY_CHECKS = 1;

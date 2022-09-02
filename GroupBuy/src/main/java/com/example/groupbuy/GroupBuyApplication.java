@@ -1,10 +1,14 @@
 package com.example.groupbuy;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.connector.Connector;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.net.InetAddress;
@@ -30,5 +34,16 @@ public class GroupBuyApplication {
                 InetAddress.getLocalHost().getHostAddress(),
                 environment.getProperty("server.port") + bean.getServlet().getContextPath() + "/swagger-ui.html");
     }
+
+    // 同时支持对于http的8080端口进行访问
+    @Bean
+    public ServletWebServerFactory servletContainer() {
+        TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
+        Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
+        connector.setPort(8080);
+        tomcat.addAdditionalTomcatConnectors(connector);
+        return tomcat;
+    }
+
 
 }

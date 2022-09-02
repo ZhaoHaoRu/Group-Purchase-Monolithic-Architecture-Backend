@@ -315,7 +315,7 @@ public class GroupServiceImpl implements GroupService {
         Set<Goods> newSet = Sets.newHashSet();
         for (int i=0; i<goodsList.size(); ++i){
             Goods goods = goodsList.get(i);
-            if (goods.getInventory()>=0){
+            if (goods.getInventory() >= 0){
                 newSet.add(goods);
             }
         }

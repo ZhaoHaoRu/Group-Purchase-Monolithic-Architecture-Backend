@@ -201,6 +201,11 @@ public class UserServiceImpl implements UserService {
             else if(createGroups.contains(group)) {
                 continue;
             }
+            /** 过滤掉inventory为-1的
+             */
+            Set<Goods> tmp = group.getGoods();
+            tmp = FilterByInventory(tmp);
+            group.setGoods(tmp);
             groupFiltered.add(group);
         }
         return groupFiltered;
