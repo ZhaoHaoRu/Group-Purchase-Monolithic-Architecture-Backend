@@ -1,13 +1,13 @@
 package com.example.groupbuy.serviceimpl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.example.groupbuy.dao.*;
 import com.example.groupbuy.entity.*;
+import com.example.groupbuy.service.UserAuthService;
 import com.example.groupbuy.service.UserService;
 import com.example.groupbuy.utils.messageUtils.Message;
 import com.example.groupbuy.utils.messageUtils.MessageUtil;
-import com.google.common.collect.Sets;
-import io.swagger.models.auth.In;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,6 +22,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private GroupDao groupDao;
+
+    @Resource
+    private UserAuthService userAuthService;
 
     @Override
     public Message<User> userAuth(String userName, String password) {
@@ -56,6 +59,10 @@ public class UserServiceImpl implements UserService {
             userHistory.setCategory(category);
             userDao.saveUserHistory(userHistory);
         }
+        /**
+         * 为用户建立登录时验证的密文
+         */
+        userAuthService.register(afterSave);
         return MessageUtil.createMessage(MessageUtil.REGISTER_SUCCESS_CODE, MessageUtil.REGISTER_SUCCESS_MSG,afterSave);
     }
 

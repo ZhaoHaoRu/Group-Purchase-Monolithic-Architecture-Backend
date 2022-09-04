@@ -22,13 +22,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 @Getter
 @Setter
 @Entity
+@Data
 @Table(name = "user")
 @Comment("用户表")
 @ApiModel("用户信息")
@@ -95,6 +99,5 @@ public class User {
     //拥有mappedBy注解的实体类为关系被维护端
     //mappedBy="author"中的author是Article中的author属性
     private Set<GroupBuying> createGroups;//创建的团购列表
-
 
 }

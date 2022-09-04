@@ -36,14 +36,14 @@ public class GroupBuyApplication {
     }
 
     // 同时支持对于http的8080端口进行访问
-    @Bean
-    public ServletWebServerFactory servletContainer() {
-        TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
-        Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
-        connector.setPort(8080);
-        tomcat.addAdditionalTomcatConnectors(connector);
-        return tomcat;
-    }
+//    @Bean
+//    public ServletWebServerFactory servletContainer() {
+//        TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
+//        Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
+//        connector.setPort(8080);
+//        tomcat.addAdditionalTomcatConnectors(connector);
+//        return tomcat;
+//    }
 
 
 }

@@ -24,4 +24,5 @@ public interface UserDao {
     void updateLiking(Integer newLiking, Integer userId, String category);
 
     UserHistory saveUserHistory(UserHistory userHistory);
+
 }
