@@ -2,6 +2,7 @@ package com.example.groupbuy.filter;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.groupbuy.entity.UserForDetail;
+import com.example.groupbuy.repository.UserForDetailRepository;
 import com.example.groupbuy.utils.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.groupbuy.config.RsaKeyProperties;
@@ -12,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +32,9 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
     private RsaKeyProperties rsaKeyProperties;
+
+    @Resource
+    UserForDetailRepository userForDetailRepository;
 
     public JwtLoginFilter(AuthenticationManager authenticationManager, RsaKeyProperties rsaKeyProperties) {
         this.authenticationManager = authenticationManager;
@@ -86,7 +91,9 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
     public void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         UserForDetail user = new UserForDetail();
         user.setUsername(authResult.getName());
-        String token = JwtUtils.generateTokenExpireInMinutes(user,rsaKeyProperties.getPrivateKey(),24*60);
+//        UserForDetail userForDetail = userForDetailRepository.findByUser(user.getUsername());
+        // 这里只加密用户名
+        String token = JwtUtils.generateTokenExpireInMinutes(user.getUsername(),rsaKeyProperties.getPrivateKey(),24*60);
         response.addHeader("Authorization", "Token " + token);
         try {
             //登录成功时，返回json格式进行提示

@@ -77,14 +77,28 @@ public class JwtUtils {
      * @param publicKey 公钥
      * @return 用户信息
      */
-    public static <T> UserAuth<T> getInfoFromToken(String token, PublicKey publicKey, Class<T> userType) {
+//    public static <T> UserAuth<T> getInfoFromToken(String token, PublicKey publicKey, Class<T> userType) {
+//        Jws<Claims> claimsJws = parserToken(token, publicKey);
+//        Claims body = claimsJws.getBody();
+//        UserAuth<T> claims = new UserAuth<>();
+//        String username = body.get("user", String.class);
+//        System.out.println(username);
+//        claims.setId(body.getId());
+//        claims.setUserInfo(JsonUtils.toBean(body.get(JWT_PAYLOAD_USER_KEY).toString(), userType));
+//        claims.setExpiration(body.getExpiration());
+//        return claims;
+//    }
+
+    public static String getInfoFromToken(String token, PublicKey publicKey) {
         Jws<Claims> claimsJws = parserToken(token, publicKey);
         Claims body = claimsJws.getBody();
-        UserAuth<T> claims = new UserAuth<>();
-        claims.setId(body.getId());
-        claims.setUserInfo(JsonUtils.toBean(body.get(JWT_PAYLOAD_USER_KEY).toString(), userType));
-        claims.setExpiration(body.getExpiration());
-        return claims;
+//        UserAuth<T> claims = new UserAuth<>();
+        String username = body.get("user", String.class);
+        System.out.println(username);
+//        claims.setId(body.getId());
+//        claims.setUserInfo(JsonUtils.toBean(body.get(JWT_PAYLOAD_USER_KEY).toString(), userType));
+//        claims.setExpiration(body.getExpiration());
+        return username;
     }
 
     /**
@@ -94,12 +108,12 @@ public class JwtUtils {
      * @param publicKey 公钥
      * @return 用户信息
      */
-    public static <T> UserAuth<T> getInfoFromToken(String token, PublicKey publicKey) {
-        Jws<Claims> claimsJws = parserToken(token, publicKey);
-        Claims body = claimsJws.getBody();
-        UserAuth<T> claims = new UserAuth<>();
-        claims.setId(body.getId());
-        claims.setExpiration(body.getExpiration());
-        return claims;
-    }
+//    public static <T> UserAuth<T> getInfoFromToken(String token, PublicKey publicKey) {
+//        Jws<Claims> claimsJws = parserToken(token, publicKey);
+//        Claims body = claimsJws.getBody();
+//        UserAuth<T> claims = new UserAuth<>();
+//        claims.setId(body.getId());
+//        claims.setExpiration(body.getExpiration());
+//        return claims;
+//    }
 }
