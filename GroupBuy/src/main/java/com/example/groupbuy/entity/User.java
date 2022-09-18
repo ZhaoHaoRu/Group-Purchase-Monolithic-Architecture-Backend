@@ -2,6 +2,7 @@ package com.example.groupbuy.entity;
 
 
 import com.example.groupbuy.config.Comment;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -14,24 +15,34 @@ import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.*;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
-
-
-
 @Getter
 @Setter
 @Entity
+@Data
 @Table(name = "user")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 @Comment("用户表")
 @ApiModel("用户信息")
 public class User {
-    @Column(name = "user_id",  nullable = false)
-    @Comment("用户主键")
-    @ApiModelProperty(value = "用户主键")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    @Column(name = "user_id")
+    @Comment("用户主键")
+    @ApiModelProperty(value = "用户主键")
+    private Integer userId;
 
     @Basic
     @Column(name = "user_name")
@@ -62,10 +73,12 @@ public class User {
 
 
     //与地址簿的关系
+    @JsonIgnore
     @OneToMany(mappedBy = "user",cascade=CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<Address> addresses;
 
     //与订阅的关系
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "subscriptions",joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id"))
@@ -79,24 +92,12 @@ public class User {
     //主表就是关系维护端对应的表，从表就是关系被维护端对应的表
     private Set<GroupBuying> groups;
 
-
     //与团购团长的关系一对多
+    @JsonIgnore
     @OneToMany(fetch=FetchType.EAGER,mappedBy = "user",cascade = CascadeType.ALL)
     //级联保存、更新、删除、刷新;延迟加载。当删除用户，会级联删除该用户的所有创建了的团购
     //拥有mappedBy注解的实体类为关系被维护端
     //mappedBy="author"中的author是Article中的author属性
     private Set<GroupBuying> createGroups;//创建的团购列表
 
-    public User() {}
-
-    public User(User user) {
-        this.userId = user.userId;
-        this.email = user.email;
-        this.userName = user.userName;
-        this.password = user.password;
-        this.wallet = user.wallet;
-        this.addresses = user.addresses;
-        this.createGroups = user.createGroups;
-        this.groups = user.groups;
-    }
 }
