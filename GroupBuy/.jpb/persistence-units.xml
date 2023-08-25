@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit name="Default">
+        <packages>
+          <package value="com.example.groupbuy" />
+        </packages>
+        <entities>
+          <entity value="org.springframework.data.jpa.domain.AbstractAuditable" />
+          <entity value="org.springframework.data.jpa.domain.AbstractPersistable" />
+        </entities>
+      </persistence-unit>
+    </persistence-units>
+  </component>
+</project>
